@@ -16,6 +16,9 @@
 
 # Author: Benjamin Farnham <benjamin.farnham@cern.ch>
 
+# C++11 as standard
+set (CMAKE_CXX_STANDARD 11)
+
 if( NOT DEFINED LOGIT_HAS_BOOSTLOG )
 	set (LOGIT_HAS_BOOSTLOG FALSE)
 endif()
