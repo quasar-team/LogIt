@@ -21,7 +21,7 @@
  */
 --->
 # LogIt
-LogIt is designed to be a high performance, flexible, thread-safe logging solution for C++ projects
+LogIt is designed to be a high performance, flexible, thread-safe and cross platform logging solution for C++ projects
 
 # Overall Architecture
 ## Front end
