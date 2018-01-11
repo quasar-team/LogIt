@@ -30,15 +30,15 @@
 
 using std::string;
 
-#ifdef LOGIT_HAS_BOOSTLOG
-#include "BoostRotatingFileLog.h"
-#endif
-
-#ifdef LOGIT_HAS_STDOUTLOG
+#ifdef DLOGIT_BACKEND_STDOUTLOG
 #include <StdOutLog.h>
 #endif
 
-#ifdef LOGIT_HAS_UATRACE
+#ifdef LOGIT_BACKEND_BOOSTLOG
+#include "BoostRotatingFileLog.h"
+#endif
+
+#ifdef LOGIT_BACKEND_UATRACE
 #include <UaTraceSink.h>
 #endif
 
@@ -47,19 +47,19 @@ void initializeSinks()
 {
 	if(!LogItInstance::instanceExists()) return;
 
-	#ifdef LOGIT_HAS_BOOSTLOG
-    BoostRotatingFileLog* fileLogger = new BoostRotatingFileLog();
-    fileLogger->initialize();
-    LogItInstance::getInstance()->m_logSinksInstance.addSink(fileLogger);
-	#endif // LOGIT_HAS_BOOSTLOG
-
-	#ifdef LOGIT_HAS_STDOUTLOG
+	#ifdef DLOGIT_BACKEND_STDOUTLOG
     StdOutLog * stdOutLog = new StdOutLog();
     stdOutLog->initialize();
     LogItInstance::getInstance()->m_logSinksInstance.addSink(stdOutLog);
 	#endif
 
-	#ifdef LOGIT_HAS_UATRACE
+	#ifdef LOGIT_BACKEND_BOOSTLOG
+    BoostRotatingFileLog* fileLogger = new BoostRotatingFileLog();
+    fileLogger->initialize();
+    LogItInstance::getInstance()->m_logSinksInstance.addSink(fileLogger);
+	#endif
+
+	#ifdef LOGIT_BACKEND_UATRACE
     UaTraceSink * uaTraceSink = new UaTraceSink ();
     uaTraceSink->initialize();
     LogItInstance::getInstance()->m_logSinksInstance.addSink(uaTraceSink);

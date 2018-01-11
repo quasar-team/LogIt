@@ -28,10 +28,7 @@ endif()
 if( NOT DEFINED ENV{BOOST_PATH_LIBS} )
     message(FATAL_ERROR "environment variable BOOST_HOME not defined - please set this to a 64bit boost installation library directory")
 endif()
-message(STATUS "BOOST - include [${BOOST_PATH_HEADERS}] libs [${BOOST_PATH_LIBS}] BOOST_LIB_SUFFIX [$ENV{BOOST_LIB_SUFFIX}]")
-
-SET( BOOST_PATH_HEADERS $ENV{BOOST_HOME}/include )
-SET( BOOST_PATH_LIBS $ENV{BOOST_HOME}/lib )
+message(STATUS "BOOST - include [$ENV{BOOST_PATH_HEADERS}] libs [$ENV{BOOST_PATH_LIBS}] BOOST_LIB_SUFFIX [$ENV{BOOST_LIB_SUFFIX}]")
 
 set(LOGIT_SOURCES
     src/LogIt.cpp
@@ -40,19 +37,30 @@ set(LOGIT_SOURCES
     src/LogSinks.cpp
     src/ComponentAttributes.cpp
     src/LogItInstance.cpp
-) 
+)
+set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+
+option(LOGIT_BACKEND_STDOUTLOG "The basic back-end: logs to stdout" ON )
+option(LOGIT_BACKEND_BOOSTLOG "Rotating file logger back-end: fixed size on disk based on boost logging library" OFF )
+option(LOGIT_BACKEND_UATRACE "UnifiedAutomation toolkit logger" OFF )
    
-if( NOT DEFINED LOGIT_HAS_BOOSTLOG )
-	set (LOGIT_HAS_BOOSTLOG FALSE)
+if( LOGIT_BACKEND_STDOUTLOG )
+    add_definitions(-DLOGIT_BACKEND_STDOUTLOG)
+    set(LOGIT_SOURCES ${LOGIT_SOURCES} src/StdOutLog.cpp)
 endif()
 
-if( NOT DEFINED LOGIT_HAS_STDOUTLOG )
-	set (LOGIT_HAS_STDOUTLOG TRUE)
+if( LOGIT_BACKEND_BOOSTLOG )
+    add_definitions(-DLOGIT_BACKEND_BOOSTLOG)
+    set(LOGIT_SOURCES ${LOGIT_SOURCES} src/BoostRotatingFileLog.cpp)
 endif()
 
-if( NOT DEFINED LOGIT_HAS_UATRACE )
-	set (LOGIT_HAS_UATRACE FALSE)
+if( LOGIT_BACKEND_UATRACE )
+    add_definitions(-DLOGIT_BACKEND_UATRACE)
+    set(LOGIT_SOURCES ${LOGIT_SOURCES} src/UaTraceSink.cpp)
 endif()
+
+MESSAGE( STATUS "building LogIt from source files [${LOGIT_SOURCES}]" )
+MESSAGE( STATUS "LogIt build options: STANDALONE_BUILD [${STANDALONE_BUILD}], backends: LOGIT_BACKEND_STDOUTLOG [${LOGIT_BACKEND_STDOUTLOG}] LOGIT_BACKEND_BOOSTLOG [${LOGIT_BACKEND_BOOSTLOG}] LOGIT_BACKEND_UATRACE [${LOGIT_BACKEND_UATRACE}]" )
 
 # handle binary library build (builds with -DSTANDALONE_BUILD=ON)
 option(STANDALONE_BUILD "Build it as a stand-alone library (i.e. as opposed to an Quasar internal module)" OFF )
@@ -61,28 +69,8 @@ if(STANDALONE_BUILD)
   add_library( LogIt_static STATIC ${LOGIT_SOURCES} )
   include_directories( 
     include
-    ${BOOST_PATH_HEADERS}
+    $ENV{BOOST_PATH_HEADERS}
   )
-else(STANDALONE_BUILD)
+else()
   add_library (LogIt OBJECT ${LOGIT_SOURCES}) 
-endif(STANDALONE_BUILD)
-
-MESSAGE( STATUS "LogIt build options: STANDALONE_BUILD [${STANDALONE_BUILD}], backends: LOGIT_HAS_STDOUTLOG [${LOGIT_HAS_STDOUTLOG}] LOGIT_HAS_BOOSTLOG [${LOGIT_HAS_BOOSTLOG}] LOGIT_HAS_UATRACE [${LOGIT_HAS_UATRACE}]" )
-
-if(${LOGIT_HAS_BOOSTLOG})
-    add_definitions(-DLOGIT_HAS_BOOSTLOG)
-    set(LOGIT_SOURCES ${LOGIT_SOURCES} src/BoostRotatingFileLog.cpp)
-endif(${LOGIT_HAS_BOOSTLOG})  
-
-if(${LOGIT_HAS_STDOUTLOG})
-    add_definitions(-DLOGIT_HAS_STDOUTLOG)
-    set(LOGIT_SOURCES ${LOGIT_SOURCES} src/StdOutLog.cpp)
-endif(${LOGIT_HAS_STDOUTLOG})
-
-if(${LOGIT_HAS_UATRACE})
-    add_definitions(-DLOGIT_HAS_UATRACE)
-    set(LOGIT_SOURCES ${LOGIT_SOURCES} src/UaTraceSink.cpp)
-endif(${LOGIT_HAS_UATRACE})
-
-set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
-MESSAGE( STATUS "building LogIt from source files [${LOGIT_SOURCES}]" )
+endif()
