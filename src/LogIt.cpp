@@ -22,7 +22,6 @@
 #include "LogIt.h"
 #include <iostream>
 #include <map>
-#include <boost/algorithm/string/case_conv.hpp>
 
 #include "ComponentAttributes.h"
 #include "LogSinks.h"

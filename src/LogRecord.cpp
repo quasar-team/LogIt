@@ -23,11 +23,15 @@
 #include "LogItInstance.h"
 #include "LogIt.h"
 
+/**
+ * Rather irritating - boost needed for generating time-stamp: GCC 4.8 has
+ * omitted the C++11 std::get_time/put_time that would obviate this necessity.
+ *
+ * GCC 5+ does though.
+ */
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/posix_time/posix_time_io.hpp>
 #include <boost/format.hpp>
-
-//namespace boost = boost_1_54_0;
 
 using boost::posix_time::time_facet;
 using boost::posix_time::microsec_clock;
