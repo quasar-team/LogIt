@@ -65,12 +65,14 @@ MESSAGE( STATUS "LogIt build options: STANDALONE_BUILD [${STANDALONE_BUILD}], ba
 # handle binary library build (builds with -DSTANDALONE_BUILD=ON)
 option(STANDALONE_BUILD "Build it as a stand-alone library (i.e. as opposed to an Quasar internal module)" OFF )
 if(STANDALONE_BUILD)
-  add_library( LogIt_shared SHARED ${LOGIT_SOURCES} )
-  add_library( LogIt_static STATIC ${LOGIT_SOURCES} )
   include_directories( 
     include
     $ENV{BOOST_PATH_HEADERS}
   )
+  link_directories (
+    $ENV{BOOST_PATH_LIBS}  
+  )
+  add_library( LogIt_lib SHARED ${LOGIT_SOURCES} )
 else()
   add_library (LogIt OBJECT ${LOGIT_SOURCES}) 
 endif()
