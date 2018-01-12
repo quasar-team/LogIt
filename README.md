@@ -134,15 +134,15 @@ option(LOGIT_BACKEND_UATRACE "UnifiedAutomation toolkit logger" OFF )
 ```
 
 ## linux
-_example: build LogIt as a linux shared library: enable the stdout and boost logger back-ends_
+_example: build LogIt as a linux shared library: here enabling both the stdout and boost logger back-ends_
 ```
 cmake -DCMAKE_BUILD_TYPE=RELEASE -DSTANDALONE_BUILD=ON -DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON
 make clean && make
 ```
 
 ## windows
-_example: build LogIt as a windows shared library: enable the stdout and boost logger back-ends_
+_example: build LogIt as a windows shared library: here enabling only the stdout back-end_
 ```
-cmake -DCMAKE_BUILD_TYPE=RELEASE -DSTANDALONE_BUILD=ON -DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON -G "Visual Studio 15 2017 Win64"
+cmake -DCMAKE_BUILD_TYPE=RELEASE -DSTANDALONE_BUILD=ON -DLOGIT_BACKEND_STDOUTLOG=ON -G "Visual Studio 15 2017 Win64"
 ```
-Then open the generated Project.sln file in visual studio (works with the free [visual studio 2017 community edition](https://www.visualstudio.com/vs/community/) )
+Then open the generated Project.sln file in visual studio (works with the free [visual studio 2017 community edition](https://www.visualstudio.com/vs/community/) ), build in the usual visual studio way.
