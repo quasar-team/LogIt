@@ -24,9 +24,11 @@
 LogIt is designed to be a high performance, flexible, thread-safe and cross platform logging solution for C++ projects
 
 Table of contents
-1. [Overall Architecture](#architecture)
+1. Overall Architecture
+2. Performance Consideration (handles vs names)
+3. Building (linux and windows)
 
-# Overall Architecture [](#){name=example}
+# Overall Architecture
 ## Front end
 LogIt provides a logging front-end; this is the API your code will call to log messages via LogIt. The front-end is fixed, this is the API described in the interface file _LogIt.h_.
 
@@ -103,9 +105,44 @@ _example: a log entry for a component_
 ```
 2018-01-09 18:27.31.122088 [SomeFile.cpp:123, TRC, myComponentName] message logged using component ...
 ```
-### Component Logging Performance Consideration: log with handle vs log with name
+# Performance Consideration: components - logging with handle vs logging with name
 At runtime, LogIt must evaluate _every_ call to _LOG(...)_ to see whether its message should be sent to the backends (i.e. logged), or ignored. This decision is based on the relevant threshold for the component. LogIt tries to minimize the cost of these evaluations in line with the general C++ maxim (_don't pay for what you don't use_), however, an evaluation is required and therefore _LOG(...)_ invocations have an associated cost. What are the costs?
 1. **log with handle == fast** : An internal implementation detail now - a component's handle actually identifies the position of an object managing that component's details held in an internal array. The component's details include the current verbosity setting. Evaluating _LOG(...)_ calls made with a component handle essentially require a simple access to that component object based on the handle then a simple, numerical, comparison. Cheap. 
 2. **log with name == slower** : Another internal implementation detail - LogIt resolves calls to _LOG(...)_ made with component names to, essentially, the same call with the corresponding component handle. Clearly then, this requires an additional step: resolving the name to the handle. This is done using a look up in a map that LogIt maintains internally. Until some (as yet unknown) more efficient way of doing this is discovered, this is a more costly operation; _LOG(...)_ calls with component names require a thread-safe lookup in a map, and then (after successfully retrieving the appropriate handle) the same cost as a _LOG(...)_ invocation with a handle. Less cheap.
 
 __Caveat: Implementations change faster than documentation - please resist any temptation to build splendiferous edifices in your code based on the information above, if the implementation changes those edifices may crumble. And we will cruelly point to this caveat. You can store handles returned from _register_ calls, and use those handles in _LOG(...)_ calls, or you can call _LOG(...)_ with component names. That will always be supported.__
+
+# Building
+LogIt builds are handled with [cmake](http://cmake.org): cmake generates the appropriate build instructions (linux - makefiles, windows: MS visual studio solution) for your target environment.
+
+## Generic Dependencies
+A general note: The LogIt front-end depends on [boost](http://boost.org) (the fairly ubiquitous C++ library), you'll need to have the boost library installed on your machine to build LogIt.
+
+__Implementation detail: This generic dependency on boost comes from the front-end time-stamping code in _LogRecord.cpp_, in an ideal world this dependency could be got rid of, however, the useful C++11 `std::get_time/std::put_time` were seemingly omitted from GCC 4.8 (the current GCC version on Centos7 - a required platform), so the current implementation uses boost to fill this functionality gap.__
+
+## Backends: their specific dependencies and enabling/disabling them in the build
+As previously noted, LogIt currently comes with 3 ready-made logging back-end implementations (and an open interface for you to develop your own). Each back-end has specific dependencies, arising from whatever libraries etc the implementation is based upon.
+* stdout backend - no dependencies, this implementation is based on standard C++.
+* boost rotating log - depends on boost (which you need anyway for any LogIt build). One caveat: the boost version must contain Boost.Log, only available since boost v1.54.0
+* unified automation trace log - depends on the commercial [unified automation](http://unified-automation.com) toolkit.
+
+Based on your logging requirements (and access to dependencies), back-ends can be switched on/off in your build, look for these options in _CMakeLists.txt_ (i.e. LogIt's cmake build file).
+```
+option(LOGIT_BACKEND_STDOUTLOG "The basic back-end: logs to stdout" ON )
+option(LOGIT_BACKEND_BOOSTLOG "Rotating file logger back-end: fixed size on disk based on boost logging library" OFF )
+option(LOGIT_BACKEND_UATRACE "UnifiedAutomation toolkit logger" OFF )
+```
+
+## linux
+_example: build LogIt as a linux shared library: enable the stdout and boost logger back-ends_
+```
+cmake -DCMAKE_BUILD_TYPE=RELEASE -DSTANDALONE_BUILD=ON -DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON
+make clean && make
+```
+
+## windows
+_example: build LogIt as a windows shared library: enable the stdout and boost logger back-ends_
+```
+cmake -DCMAKE_BUILD_TYPE=RELEASE -DSTANDALONE_BUILD=ON -DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON -G "Visual Studio 15 2017 Win64"
+<open the generated Project.sln file in visual studio (works with the free visual studio community edition).
+```
