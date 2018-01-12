@@ -144,5 +144,5 @@ make clean && make
 _example: build LogIt as a windows shared library: enable the stdout and boost logger back-ends_
 ```
 cmake -DCMAKE_BUILD_TYPE=RELEASE -DSTANDALONE_BUILD=ON -DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON -G "Visual Studio 15 2017 Win64"
-<open the generated Project.sln file in visual studio (works with the free visual studio community edition).
+<open the generated Project.sln file in visual studio (works with the free visual studio 2017 community edition).>
 ```
