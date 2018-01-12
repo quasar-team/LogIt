@@ -26,7 +26,7 @@ LogIt is designed to be a high performance, flexible, thread-safe and cross plat
 Table of contents
 1. [Overall Architecture](#architecture)
 
-# Overall Architecture <a name="architecture"></a>
+# Overall Architecture [](#){name=example}
 ## Front end
 LogIt provides a logging front-end; this is the API your code will call to log messages via LogIt. The front-end is fixed, this is the API described in the interface file _LogIt.h_.
 
