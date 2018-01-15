@@ -26,9 +26,17 @@ if( NOT DEFINED ENV{BOOST_PATH_HEADERS} )
     message(FATAL_ERROR "environment variable BOOST_PATH_HEADERS not defined - please set this to a 64bit boost installation include directory")
 endif()
 if( NOT DEFINED ENV{BOOST_PATH_LIBS} )
-    message(FATAL_ERROR "environment variable BOOST_HOME not defined - please set this to a 64bit boost installation library directory")
+    message(FATAL_ERROR "environment variable BOOST_PATH_LIBS not defined - please set this to a 64bit boost installation library directory")
 endif()
+
 message(STATUS "BOOST - include [$ENV{BOOST_PATH_HEADERS}] libs [$ENV{BOOST_PATH_LIBS}] BOOST_LIB_SUFFIX [$ENV{BOOST_LIB_SUFFIX}]")
+include_directories( 
+	include 
+	$ENV{BOOST_PATH_HEADERS} 
+)
+link_directories(
+	$ENV{BOOST_PATH_LIBS} 
+)
 
 set(LOGIT_SOURCES
     src/LogIt.cpp
@@ -65,13 +73,6 @@ MESSAGE( STATUS "LogIt build options: STANDALONE_BUILD [${STANDALONE_BUILD}], ba
 # handle binary library build (builds with -DSTANDALONE_BUILD=ON)
 option(STANDALONE_BUILD "Build it as a stand-alone library (i.e. as opposed to an Quasar internal module)" OFF )
 if(STANDALONE_BUILD)
-  include_directories( 
-    include
-    $ENV{BOOST_PATH_HEADERS}
-  )
-  link_directories (
-    $ENV{BOOST_PATH_LIBS}  
-  )
   add_library( LogIt_lib SHARED ${LOGIT_SOURCES} )
 else()
   add_library (LogIt OBJECT ${LOGIT_SOURCES}) 
