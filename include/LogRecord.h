@@ -30,13 +30,13 @@
 class LogRecord
 {
 public:
-    LogRecord(const std::string& file, const int& line, const Log::LOG_LEVEL& level);
-    LogRecord(const std::string& file, const int& line, const Log::LOG_LEVEL& level, const Log::LogComponentHandle& componentHandle);
-    LogRecord(const std::string& file, const int& line, const Log::LOG_LEVEL& level, const std::string& componentName);
+	SHARED_LIB_EXPORT_DEFN LogRecord(const std::string& file, const int& line, const Log::LOG_LEVEL& level);
+	SHARED_LIB_EXPORT_DEFN LogRecord(const std::string& file, const int& line, const Log::LOG_LEVEL& level, const Log::LogComponentHandle& componentHandle);
+	SHARED_LIB_EXPORT_DEFN LogRecord(const std::string& file, const int& line, const Log::LOG_LEVEL& level, const std::string& componentName);
 
-    virtual ~LogRecord();
+	SHARED_LIB_EXPORT_DEFN virtual ~LogRecord();
 
-    std::ostream& getStream();
+	SHARED_LIB_EXPORT_DEFN std::ostream& getStream();
 
 private:
     static const std::string stripDirectory(const std::string& file);

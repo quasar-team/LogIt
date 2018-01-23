@@ -21,6 +21,15 @@
 #ifndef LOGIT_INCLUDE_LOGITSTATICDEFINITIONS_H_
 #define LOGIT_INCLUDE_LOGITSTATICDEFINITIONS_H_
 
+ /**
+ * If building LogIt as a dll, windows needs to know which functions are externally visible
+ */
+#ifdef _WINDOWS
+#define SHARED_LIB_EXPORT_DEFN __declspec(dllexport)
+#else
+#define SHARED_LIB_EXPORT_DEFN 
+#endif //_WINDOWS
+
 namespace Log
 {
 	typedef size_t LogComponentHandle;

@@ -73,7 +73,7 @@ MESSAGE( STATUS "LogIt build options: LOGIT_BUILD_SHARED_LIB [${LOGIT_BUILD_SHAR
 # handle binary library build (builds with -DLOGIT_BUILD_SHARED_LIB=ON)
 option(LOGIT_BUILD_SHARED_LIB "Build a LogIt shared library if ON (otherwise builds an object library)" OFF )
 if(LOGIT_BUILD_SHARED_LIB)
-  add_library( LogIt_lib SHARED ${LOGIT_SOURCES} )
+  add_library( LogIt SHARED ${LOGIT_SOURCES} )
 else()
   add_library (LogIt OBJECT ${LOGIT_SOURCES}) 
 endif()

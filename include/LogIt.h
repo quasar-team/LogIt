@@ -66,7 +66,7 @@ namespace Log
      * LOG(LOG_LEVEL)
      * invocations will be considered for logging, subject to logging verbosity threshold.
      */
-    bool initializeLogging(const Log::LOG_LEVEL& nonComponentLogLevel = Log::INF);
+	SHARED_LIB_EXPORT_DEFN  bool initializeLogging(const Log::LOG_LEVEL& nonComponentLogLevel = Log::INF);
 
 	/**
 	 * initializer to be called when using LogIt *inside* a shared library. The remoteLogInstance ptr should be supplied
@@ -76,7 +76,7 @@ namespace Log
 	 * The ptr (in the main executable, to pass to the DLL) is available from LogItInstance::getInstance() after the exe
 	 * calls LogIt::initialiseLogging().
 	 */
-	bool initializeDllLogging(LogItInstance* remoteLogInstance);
+	SHARED_LIB_EXPORT_DEFN bool initializeDllLogging(LogItInstance* remoteLogInstance);
 
     /**
      * register a user defined logging component.
@@ -87,7 +87,7 @@ namespace Log
      *
      * RETURNS: the logging component handle, or, in case of error, Log::INVALID_HANDLE
      */
-	LogComponentHandle registerLoggingComponent(const std::string& componentName, const Log::LOG_LEVEL& nonComponentLogLevel = Log::INF);
+	SHARED_LIB_EXPORT_DEFN LogComponentHandle registerLoggingComponent(const std::string& componentName, const Log::LOG_LEVEL& nonComponentLogLevel = Log::INF);
 
     /**
      * log check: should message be logged?
@@ -96,16 +96,16 @@ namespace Log
      * and
      * component specific (double-arg : level + (handle or name))
      */
-    bool isLoggable(const Log::LOG_LEVEL& level);
-    bool isLoggable(const Log::LOG_LEVEL& level, const LogComponentHandle& componentHandle);
-    bool isLoggable(const Log::LOG_LEVEL& level, const std::string& componentName);
+	SHARED_LIB_EXPORT_DEFN bool isLoggable(const Log::LOG_LEVEL& level);
+	SHARED_LIB_EXPORT_DEFN bool isLoggable(const Log::LOG_LEVEL& level, const LogComponentHandle& componentHandle);
+	SHARED_LIB_EXPORT_DEFN bool isLoggable(const Log::LOG_LEVEL& level, const std::string& componentName);
 
     /**
      * Get/Set the log threshold for all LOG messages without a component specified, i.e. calls such as
      * LOG(Log::INF) << "general log message"
      */
-    void setNonComponentLogLevel(const Log::LOG_LEVEL& level);
-    Log::LOG_LEVEL getNonComponentLogLevel(void);
+	SHARED_LIB_EXPORT_DEFN void setNonComponentLogLevel(const Log::LOG_LEVEL& level);
+	SHARED_LIB_EXPORT_DEFN Log::LOG_LEVEL getNonComponentLogLevel(void);
 
     /**
      * Get/Set the log threshold for all LOG messages where a component is specified, i.e. calls such as
@@ -113,9 +113,9 @@ namespace Log
      *
      * Note getComponentLogLevel returns false if componentHandle not registered.
      */
-    const std::map<Log::LogComponentHandle, std::string> getComponentLogsList();
-    bool setComponentLogLevel(const LogComponentHandle& componentHandle, const LOG_LEVEL& level);
-    bool getComponentLogLevel(const LogComponentHandle& componentHandle, LOG_LEVEL& level);
+	SHARED_LIB_EXPORT_DEFN const std::map<Log::LogComponentHandle, std::string> getComponentLogsList();
+	SHARED_LIB_EXPORT_DEFN bool setComponentLogLevel(const LogComponentHandle& componentHandle, const LOG_LEVEL& level);
+	SHARED_LIB_EXPORT_DEFN bool getComponentLogLevel(const LogComponentHandle& componentHandle, LOG_LEVEL& level);
 
     /**
      * Finds the user defined string (specified in the registerLoggingComponent call)
@@ -124,7 +124,7 @@ namespace Log
      * If there is no component registered with that handle, returns "UNKNOWN", otherwise
      * returns the component name.
      */
-    std::string getComponentName(const LogComponentHandle& componentHandle);
+	SHARED_LIB_EXPORT_DEFN std::string getComponentName(const LogComponentHandle& componentHandle);
 
     /**
      * Finds the component handle for a given component name.
@@ -132,7 +132,7 @@ namespace Log
      * If there is no component registered with that name, returns Log::INVALID_HANDLE, otherwise
      * returns the component handle.
      */
-    LogComponentHandle getComponentHandle(const std::string componentName);
+	SHARED_LIB_EXPORT_DEFN LogComponentHandle getComponentHandle(const std::string componentName);
 }
 
 #endif /* LOGIT_H_ */
