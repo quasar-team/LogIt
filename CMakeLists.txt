@@ -31,7 +31,7 @@ endif()
 
 message(STATUS "BOOST - include [$ENV{BOOST_PATH_HEADERS}] libs [$ENV{BOOST_PATH_LIBS}] BOOST_LIB_SUFFIX [$ENV{BOOST_LIB_SUFFIX}]")
 include_directories( 
-	include 
+	${PROJECT_SOURCE_DIR}/include 
 	$ENV{BOOST_PATH_HEADERS} 
 )
 link_directories(
