@@ -1,0 +1,9 @@
+CMakeFiles/
+CMakeCache.txt
+*.vcxproj*
+*.dir/
+*.sln
+cmake_install.cmake
+Release/
+x64/
+.vs/
