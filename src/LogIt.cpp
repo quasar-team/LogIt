@@ -47,7 +47,7 @@ void initializeSinks()
 {
 	if(!LogItInstance::instanceExists()) return;
 
-	#ifdef DLOGIT_BACKEND_STDOUTLOG
+	#ifdef LOGIT_BACKEND_STDOUTLOG
     StdOutLog * stdOutLog = new StdOutLog();
     stdOutLog->initialize();
     LogItInstance::getInstance()->m_logSinksInstance.addSink(stdOutLog);
