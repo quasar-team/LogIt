@@ -30,7 +30,7 @@
 
 using std::string;
 
-#ifdef DLOGIT_BACKEND_STDOUTLOG
+#ifdef LOGIT_BACKEND_STDOUTLOG
 #include <StdOutLog.h>
 #endif
 
