@@ -43,6 +43,7 @@ set(LOGIT_SOURCES
     src/ComponentAttributes.cpp
     src/LogItInstance.cpp
 )
+include_directories( include )
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
 option(LOGIT_BACKEND_STDOUTLOG "The basic back-end: logs to stdout" ON )
