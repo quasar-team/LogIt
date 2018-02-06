@@ -22,21 +22,18 @@ cmake_minimum_required(VERSION 2.8)
 set (CMAKE_CXX_STANDARD 11) # works for CMake v3.1+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11") #for older CMake versions
 
-if( NOT DEFINED ENV{BOOST_PATH_HEADERS} )
-    message(FATAL_ERROR "environment variable BOOST_PATH_HEADERS not defined - please set this to a 64bit boost installation include directory")
+#
+# Load stand-alone build toolchain file (used for defining build-specific boost (BOOST_LIBS), amongst other things)
+#
+if(DEFINED CMAKE_TOOLCHAIN_FILE)
+  message("CMAKE_TOOLCHAIN_FILE is defined -- including [[${CMAKE_TOOLCHAIN_FILE}]]")
+  include(${CMAKE_TOOLCHAIN_FILE})    
 endif()
-if( NOT DEFINED ENV{BOOST_PATH_LIBS} )
-    message(FATAL_ERROR "environment variable BOOST_PATH_LIBS not defined - please set this to a 64bit boost installation library directory")
-endif()
-
-message(STATUS "BOOST - include [$ENV{BOOST_PATH_HEADERS}] libs [$ENV{BOOST_PATH_LIBS}] BOOST_LIB_SUFFIX [$ENV{BOOST_LIB_SUFFIX}]")
-include_directories( 
-	include 
-	$ENV{BOOST_PATH_HEADERS} 
-)
-link_directories(
-	$ENV{BOOST_PATH_LIBS} 
-)
+if( NOT DEFINED BOOST_LIBS)
+  message(FATAL_ERROR "Required variable BOOST_LIBS has not been defined. You must define a toolchain file describing (as a minimum) how boost headers/libs are resolved in the target build environment")
+endif() 
+message(STATUS "Using boost libraries: BOOST_LIBS [${BOOST_LIBS}]")
+link_directories( ${Boost_LIBRARY_DIRS} )
 
 set(LOGIT_SOURCES
     src/LogIt.cpp
