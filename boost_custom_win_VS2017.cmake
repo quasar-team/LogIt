@@ -36,6 +36,7 @@ if( NOT DEFINED ENV{BOOST_PATH_LIBS} OR NOT EXISTS $ENV{BOOST_PATH_LIBS} )
 	message(FATAL_ERROR "environment variable BOOST_PATH_LIBS must be set to a valid path for boost compiled libraries. Current value [$ENV{BOOST_PATH_LIBS}] rejected")
 endif()
 message(STATUS "Boost - libraries will be linked from [$ENV{BOOST_PATH_LIBS}]")
+link_directories( $ENV{BOOST_PATH_LIBS} )
 
 function( find_boost_static_library LIBRARY_IDENTIFIER LIBRARY_FILE_NAME)
 	SET(CMAKE_FIND_LIBRARY_SUFFIXES ".lib")
