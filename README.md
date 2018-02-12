@@ -35,7 +35,7 @@ LogIt provides a logging front-end; this is the API your code will call to log m
 _example: logging a message with the LogIt API_
 ```cpp
 // line below is line 10, in file main.cpp
-LOG(Log::INF) << "hello, world!");
+LOG(Log::INF) << "hello, world!";
 ```
 logs this output
 ```
@@ -50,8 +50,8 @@ In a production system that is currently behaving well, the logging threshold wo
 
 _example: controlling verbosity with log levels_
 ```cpp
-LOG(Log::WRN) << "Some kind of bad state detected, this information should probably always be logged");
-LOG(Log::DBG) << "A debug message. You may not want to spend resource logging this if everything is working as expected");
+LOG(Log::WRN) << "Some kind of bad state detected, this information should probably always be logged";
+LOG(Log::DBG) << "A debug message. You may not want to spend resource logging this if everything is working as expected";
 ```
 _possible LogIt log levels_
 ```cpp
