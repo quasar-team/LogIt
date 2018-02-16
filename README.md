@@ -134,15 +134,27 @@ option(LOGIT_BACKEND_UATRACE "UnifiedAutomation toolkit logger" OFF )
 ```
 
 ## linux
-_example: build LogIt as a linux shared library: here enabling both the stdout and boost logger back-ends_
+_example: build LogIt as a linux shared library using the boost version installed on the system (package boost-devel): here enabling only the stdout  logger back-end_
 ```
-cmake -DCMAKE_BUILD_TYPE=RELEASE -DLOGIT_BUILD_SHARED_LIB=ON -DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON
+cmake -DCMAKE_BUILD_TYPE=RELEASE -DLOGIT_BUILD_SHARED_LIB=ON -DCMAKE_TOOLCHAIN_FILE=boost_standard_install_cc7.cmake
+make clean && make
+```
+_example: build LogIt as a linux shared library using a custom boost version (e.g. built locally from source): here both the stdout and boost logger backends are enabled (note: Boost.Log is only available from boost version 1.54 onwards)#_
+```
+# (comment) - set environment variables to point to the custom boost headers/libs directories (required by the toolchain file)
+export BOOST_PATH_HEADERS=/local/bfarnham/workspace/boost_mapped_namespace_builder/work/MAPPED_NAMESPACE_INSTALL/64bit/include/
+export BOOST_PATH_LIBS=/local/bfarnham/workspace/boost_mapped_namespace_builder/work/MAPPED_NAMESPACE_INSTALL/64bit/lib/
+
+cmake -DCMAKE_BUILD_TYPE=RELEASE -DLOGIT_BUILD_SHARED_LIB=ON -DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON -DCMAKE_TOOLCHAIN_FILE=boost_custom_cc7.cmake
 make clean && make
 ```
 
 ## windows
-_example: build LogIt as a windows shared library: here enabling only the stdout back-end_
+_example: build LogIt as a windows shared library: here enabling both the stdout and boost logger back-ends. Note also this build uses a custom boost build_
 ```
-cmake -DCMAKE_BUILD_TYPE=RELEASE -DLOGIT_BUILD_SHARED_LIB=ON -DLOGIT_BACKEND_STDOUTLOG=ON -G "Visual Studio 15 2017 Win64"
+# (comment) - set environment variables to point to the custom boost headers/libs directories (required by the toolchain file)
+set BOOST_PATH_HEADERS=C:\3rdPartySoftware\boost_mapped_namespace_builder\work\MAPPED_NAMESPACE_INSTALL\include
+set BOOST_PATH_LIBS=C:\3rdPartySoftware\boost_mapped_namespace_builder\work\MAPPED_NAMESPACE_INSTALL\lib
+cmake -DCMAKE_BUILD_TYPE=RELEASE -DLOGIT_BUILD_SHARED_LIB=ON -DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON -DCMAKE_TOOLCHAIN_FILE=boost_custom_win_VS2017.cmake -G "Visual Studio 15 2017 Win64"
 ```
 Then open the generated Project.sln file in visual studio (works with the free [visual studio 2017 community edition](https://www.visualstudio.com/vs/community/) ), build in the usual visual studio way.
