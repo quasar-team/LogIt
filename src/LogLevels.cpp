@@ -20,8 +20,9 @@
  */
 
 #include "LogLevels.h"
-#include <boost/algorithm/string.hpp>
 #include <LogIt.h>
+#include <algorithm>
+#include <cctype>
 
 std::string Log::logLevelToString(const LOG_LEVEL& level)
 {
@@ -38,7 +39,9 @@ std::string Log::logLevelToString(const LOG_LEVEL& level)
 
 bool Log::logLevelFromString(const std::string &s, LOG_LEVEL &out)
 {
-	const std::string levelString = boost::to_upper_copy(s);
+	std::string levelString(s);
+    std::transform(levelString.begin(), levelString.end(), levelString.begin(),
+                   [](unsigned char c){ return std::toupper(c); } );
 
 	if (levelString=="ERR" || levelString=="ERROR" )	out=Log::ERR;
 	else if	(levelString=="WRN" || levelString=="WARN" || levelString=="WARNING" ) out=Log::WRN;

@@ -22,22 +22,23 @@
 #include "LogIt.h"
 #include <iostream>
 #include <map>
-#include <boost/algorithm/string/case_conv.hpp>
 
 #include "ComponentAttributes.h"
 #include "LogSinks.h"
 #include "LogLevels.h"
 #include "LogItInstance.h"
 
-#ifdef LOGIT_HAS_BOOSTLOG
-#include "BoostRotatingFileLog.h"
-#endif
+using std::string;
 
-#ifdef LOGIT_HAS_STDOUTLOG
+#ifdef LOGIT_BACKEND_STDOUTLOG
 #include <StdOutLog.h>
 #endif
 
-#ifdef LOGIT_HAS_UATRACE
+#ifdef LOGIT_BACKEND_BOOSTLOG
+#include "BoostRotatingFileLog.h"
+#endif
+
+#ifdef LOGIT_BACKEND_UATRACE
 #include <UaTraceSink.h>
 #endif
 
@@ -46,35 +47,23 @@ void initializeSinks()
 {
 	if(!LogItInstance::instanceExists()) return;
 
-	#ifdef LOGIT_HAS_BOOSTLOG
-    BoostRotatingFileLog* fileLogger = new BoostRotatingFileLog();
-    fileLogger->initialize();
-    LogItInstance::getInstance()->m_logSinksInstance.addSink(fileLogger);
-	#endif // LOGIT_HAS_BOOSTLOG
-
-	#ifdef LOGIT_HAS_STDOUTLOG
+	#ifdef LOGIT_BACKEND_STDOUTLOG
     StdOutLog * stdOutLog = new StdOutLog();
     stdOutLog->initialize();
     LogItInstance::getInstance()->m_logSinksInstance.addSink(stdOutLog);
 	#endif
 
-	#ifdef LOGIT_HAS_UATRACE
+	#ifdef LOGIT_BACKEND_BOOSTLOG
+    BoostRotatingFileLog* fileLogger = new BoostRotatingFileLog();
+    fileLogger->initialize();
+    LogItInstance::getInstance()->m_logSinksInstance.addSink(fileLogger);
+	#endif
+
+	#ifdef LOGIT_BACKEND_UATRACE
     UaTraceSink * uaTraceSink = new UaTraceSink ();
     uaTraceSink->initialize();
     LogItInstance::getInstance()->m_logSinksInstance.addSink(uaTraceSink);
     #endif
-}
-
-
-// internal - not exposed via API.
-void registerComponents(const std::list<ComponentAttributes>& components)
-{
-	if(!LogItInstance::instanceExists()) return;
-    for(std::list<ComponentAttributes>::const_iterator it = components.begin(); it != components.end(); ++it)
-    {
-        ComponentAttributes component = *it;
-        LogItInstance::getInstance()->m_sComponents.insert( std::map<uint32_t, ComponentAttributes>::value_type(component.getId(), component) );
-    }
 }
 
 
@@ -87,17 +76,28 @@ bool Log::initializeLogging(const Log::LOG_LEVEL& nonComponentLogLevel)
     return true;
 }
 
-bool Log::initializeLogging(const Log::LOG_LEVEL& nonComponentLogLevel, const std::list<ComponentAttributes>& components)
-{
-	if(!initializeLogging(nonComponentLogLevel)) return false;
-    registerComponents(components);
-    return true;;
-}
-
 bool Log::initializeDllLogging(LogItInstance* remoteInstance)
 {
 	return LogItInstance::setInstance(remoteInstance);
 }
+
+Log::LogComponentHandle Log::registerLoggingComponent(const string& componentName, const Log::LOG_LEVEL& nonComponentLogLevel /*=Log::INF*/)
+{
+    if(!LogItInstance::instanceExists()) return Log::INVALID_HANDLE;
+
+    try
+    {
+    	const ComponentAttributes& componentAttributes = LogItInstance::getInstance()->registerLoggingComponent(componentName, nonComponentLogLevel);
+    	return componentAttributes.getHandle();
+    }
+    catch(const std::runtime_error& e)
+    {
+    	LOG(Log::ERR) << __FUNCTION__ << " Failed to register logging component ["<<componentName<<"], message: "<<e.what();
+    }
+
+    return Log::INVALID_HANDLE;
+}
+
 
 bool Log::isLoggable(const Log::LOG_LEVEL& level)
 {
@@ -105,14 +105,24 @@ bool Log::isLoggable(const Log::LOG_LEVEL& level)
     return level >= LogItInstance::getInstance()->m_nonComponentLogLevel;
 }
 
-bool Log::isLoggable(const Log::LOG_LEVEL& level, const uint32_t& componentId)
+bool Log::isLoggable(const Log::LOG_LEVEL& level, const LogComponentHandle& componentHandle)
 {
 	if(!LogItInstance::instanceExists()) return false;
 
     LOG_LEVEL componentLogLevel;
-    if(!getComponentLogLevel(componentId, componentLogLevel)) return false; // unregistered component id.
+    if(!getComponentLogLevel(componentHandle, componentLogLevel)) return false; // unknown component handle.
 
     return level >= componentLogLevel;
+}
+
+bool Log::isLoggable(const Log::LOG_LEVEL& level, const std::string& componentName)
+{
+	if(!LogItInstance::instanceExists()) return false;
+
+	const LogComponentHandle componentHandle = getComponentHandle(componentName);
+	if(componentHandle == Log::INVALID_HANDLE) return false;
+
+	return isLoggable(level, componentHandle);
 }
 
 void Log::setNonComponentLogLevel(const LOG_LEVEL& level)
@@ -129,57 +139,50 @@ Log::LOG_LEVEL Log::getNonComponentLogLevel(void)
 	return LogItInstance::getInstance()->m_nonComponentLogLevel;
 }
 
-const std::list<ComponentAttributes> Log::getComponentLogsList()
+const std::map<Log::LogComponentHandle, string> Log::getComponentLogsList()
 {
-	std::list<ComponentAttributes> result;
+	std::map<LogComponentHandle, string> result;
 	if(!LogItInstance::instanceExists()) return result; // empty
 
-	for(std::map<uint32_t, ComponentAttributes>::const_iterator it = LogItInstance::getInstance()->m_sComponents.begin(); it != LogItInstance::getInstance()->m_sComponents.end(); ++it)
-	{
-		result.push_back(it->second);
-	}
-	return result;
+	return LogItInstance::getInstance()->getLoggingComponentsList();
 }
 
-bool Log::setComponentLogLevel(const uint32_t& componentId, const LOG_LEVEL& level)
+bool Log::setComponentLogLevel(const LogComponentHandle& componentHandle, const LOG_LEVEL& level)
 {
 	if(!LogItInstance::instanceExists()) return false;
 
-    std::map<uint32_t, ComponentAttributes>::iterator pos = LogItInstance::getInstance()->m_sComponents.find(componentId);
-    if(pos == LogItInstance::getInstance()->m_sComponents.end()) return false;
+	ComponentAttributes* componentAttributes = nullptr;
+	if(!LogItInstance::getInstance()->getComponentAttributes(componentHandle, componentAttributes)) return false;
 
-    pos->second.setLevel(level);
+    componentAttributes->setLevel(level);
     return true;
 }
 
-bool Log::getComponentLogLevel(const uint32_t& componentId, LOG_LEVEL& level)
+bool Log::getComponentLogLevel(const LogComponentHandle& componentHandle, LOG_LEVEL& level)
 {
 	if(!LogItInstance::instanceExists()) return false;
 
-	std::map<uint32_t, ComponentAttributes>::const_iterator pos = LogItInstance::getInstance()->m_sComponents.find(componentId);
-    if(pos == LogItInstance::getInstance()->m_sComponents.end()) return false;
+	ComponentAttributes* componentAttributes = nullptr;
+	if(!LogItInstance::getInstance()->getComponentAttributes(componentHandle, componentAttributes)) return false;
 
-    level = pos->second.getLevel();
+    level = componentAttributes->getLevel();
     return true;
 }
 
-void Log::setGlobalLogLevel(const LOG_LEVEL& level)
-{
-	if(!LogItInstance::instanceExists()) return;
-
-	LogItInstance::getInstance()->m_nonComponentLogLevel = level;
-    for(std::map<uint32_t, ComponentAttributes>::iterator pos = LogItInstance::getInstance()->m_sComponents.begin(); pos != LogItInstance::getInstance()->m_sComponents.end(); ++pos)
-    {
-        pos->second.setLevel(level);
-    }
-}
-
-std::string Log::componentIdToString(const uint32_t& componentId)
+string Log::getComponentName(const LogComponentHandle& componentHandle)
 {
 	if(!LogItInstance::instanceExists()) return "UNKNOWN";
 
-    std::map<uint32_t, ComponentAttributes>::iterator pos = LogItInstance::getInstance()->m_sComponents.find(componentId);
-    if(pos == LogItInstance::getInstance()->m_sComponents.end()) return "UNKNOWN";
+	ComponentAttributes* componentAttributes = nullptr;
+	if(!LogItInstance::getInstance()->getComponentAttributes(componentHandle, componentAttributes)) return "UNKNOWN";
 
-    return pos->second.getName();
+    return componentAttributes->getName();
+}
+
+Log::LogComponentHandle Log::getComponentHandle(const std::string componentName)
+{
+	if(!LogItInstance::instanceExists()) return Log::INVALID_HANDLE;
+	LogComponentHandle componentHandle = Log::INVALID_HANDLE;
+	if(!LogItInstance::getInstance()->getComponentHandle(componentName, componentHandle)) return Log::INVALID_HANDLE;
+	return componentHandle;
 }

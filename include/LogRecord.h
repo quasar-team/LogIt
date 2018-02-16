@@ -25,15 +25,18 @@
 #include <stdint.h>
 #include <sstream>
 #include "LogLevels.h"
+#include "LogItStaticDefinitions.h"
 
 class LogRecord
 {
 public:
-    LogRecord(const std::string& file, const int& line, const Log::LOG_LEVEL& level);
-    LogRecord(const std::string& file, const int& line, const Log::LOG_LEVEL& level, const uint32_t& componentId);
-    virtual ~LogRecord();
+	SHARED_LIB_EXPORT_DEFN LogRecord(const std::string& file, const int& line, const Log::LOG_LEVEL& level);
+	SHARED_LIB_EXPORT_DEFN LogRecord(const std::string& file, const int& line, const Log::LOG_LEVEL& level, const Log::LogComponentHandle& componentHandle);
+	SHARED_LIB_EXPORT_DEFN LogRecord(const std::string& file, const int& line, const Log::LOG_LEVEL& level, const std::string& componentName);
 
-    std::ostream& getStream();
+	SHARED_LIB_EXPORT_DEFN virtual ~LogRecord();
+
+	SHARED_LIB_EXPORT_DEFN std::ostream& getStream();
 
 private:
     static const std::string stripDirectory(const std::string& file);
