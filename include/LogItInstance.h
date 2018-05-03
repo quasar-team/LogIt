@@ -40,7 +40,7 @@ private:
 
 public:
 	static bool instanceExists();
-	static LogItInstance* getInstance();
+	SHARED_LIB_EXPORT_DEFN static LogItInstance* getInstance();
 	static bool setInstance(LogItInstance* remoteInstance);
 	static LogItInstance* createInstance();
 
