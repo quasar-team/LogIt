@@ -14,7 +14,7 @@ notifications:
   on_build_status_changed: true
 
 environment:
-  WINDOWS_DEPENDENCIES_DIR: D:\workspace\OPC-UA\quasar-windows-dependencies
+  WINDOWS_DEPENDENCIES_DIR: C:\workspace\OPC-UA\quasar-windows-dependencies
   BOOST_PATH_HEADERS: $(WINDOWS_DEPENDENCIES_DIR)\boost\lib\native\include
   BOOST_PATH_LIBS: $(WINDOWS_DEPENDENCIES_DIR)
   #
@@ -49,13 +49,13 @@ build_script:
 after_build:
   - ps : Write-Output "Build completed!"
   - ps : |
-         if(Test-Path "${env:QUASAR_TEST_PROJECT_DIR}\bin\OpcUaServer.exe")
+         if(Test-Path "Release\LogIt.dll")
          {
-          Write-Output "Succesfully Built QUASAR test project: ${env:QUASAR_TEST_PROJECT_DIR}" ;
+          Write-Output "Succesfully Built LogIt" ;
          }
          else
          {
-          Write-Output "ERROR! The script will terminate. There was a problem building QUASAR test project - ${env:QUASAR_TEST_PROJECT_DIR}";
+          Write-Output "ERROR! The script will terminate. There was a problem building LogIt";
           Exit 1;
          }
 
