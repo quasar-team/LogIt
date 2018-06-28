@@ -46,6 +46,7 @@ build_script:
   - cmd : mkdir build-release && cd build-release
   - cmd : cmake .. -DCMAKE_BUILD_TYPE=RELEASE -DLOGIT_BUILD_SHARED_LIB=ON -DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON -DCMAKE_TOOLCHAIN_FILE=../boost_appveyor.cmake -G "Visual Studio 15 2017 Win64"
   - cmd : cmake --build . --target ALL_BUILD --config Release
+  - cmd : cd ..
 
 after_build:
   - ps : Write-Output "Build completed!"
