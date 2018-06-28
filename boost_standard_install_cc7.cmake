@@ -18,11 +18,7 @@
 # Ben Farnham <firstNm.secondNm@cern.ch>
 
 cmake_minimum_required(VERSION 2.8)
-if (CMAKE_VERSION VERSION_LESS 3.0)
-  project(FindSystemBoost CXX)
-else()
-  project(FindSystemBoost LANGUAGES CXX)
-endif()
+project(FindSystemBoost)
 message(STATUS "Using file [boost_standard_install_cc7.cmake] toolchain file")
 message(STATUS "CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES [${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES}]")
 
