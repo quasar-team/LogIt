@@ -16,9 +16,9 @@
 
 # Author: Ben Farnham <ben.farnham@cern.ch>
 cmake_minimum_required(VERSION 2.8)
-project(LogIt)
 enable_language( C )
 enable_language( CXX )
+project(LogIt)
 
 # C++11 as standard
 set (CMAKE_CXX_STANDARD 11) # works for CMake v3.1+
