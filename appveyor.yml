@@ -61,7 +61,7 @@ after_build:
          }
 
 artifacts:
-  -path : build-release\Release\LogIt.dll
+  - path : build-release\Release\LogIt.dll
 # uncomment to block VM deletion for investigating broken builds.
 #on_finish:
 #  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
