@@ -18,7 +18,7 @@
 # Ben Farnham <firstNm.secondNm@cern.ch>
 
 cmake_minimum_required(VERSION 2.8)
-project(FindSystemBoost)
+#project(FindSystemBoost)
 #enable_language( C )
 #enable_language( CXX )
 message(STATUS "Using file [boost_standard_install_cc7.cmake] toolchain file")
