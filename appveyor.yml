@@ -43,13 +43,14 @@ install:
   - ps : Write-Output "Installed nuget packages to ${env:WINDOWS_DEPENDENCIES_DIR}"
 
 build_script:
-  - cmd : cmake -DCMAKE_BUILD_TYPE=RELEASE -DLOGIT_BUILD_SHARED_LIB=ON -DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON -DCMAKE_TOOLCHAIN_FILE=boost_appveyor.cmake -G "Visual Studio 15 2017 Win64"
+  - cmd : mkdir build-release && cd build-release
+  - cmd : cmake .. -DCMAKE_BUILD_TYPE=RELEASE -DLOGIT_BUILD_SHARED_LIB=ON -DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON -DCMAKE_TOOLCHAIN_FILE=../boost_appveyor.cmake -G "Visual Studio 15 2017 Win64"
   - cmd : cmake --build . --target ALL_BUILD --config Release
 
 after_build:
   - ps : Write-Output "Build completed!"
   - ps : |
-         if(Test-Path "Release\LogIt.dll")
+         if(Test-Path "build-release\Release\LogIt.dll")
          {
           Write-Output "Succesfully Built LogIt" ;
          }
@@ -59,6 +60,8 @@ after_build:
           Exit 1;
          }
 
+artifacts:
+  -path : build-release\Release\LogIt.dll
 # uncomment to block VM deletion for investigating broken builds.
 #on_finish:
 #  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
