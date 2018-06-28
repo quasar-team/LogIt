@@ -17,9 +17,9 @@
 # Author: Ben Farnham <ben.farnham@cern.ch>
 cmake_minimum_required(VERSION 2.8)
 if (CMAKE_VERSION VERSION_LESS 3.0)
-  project(LogIt C CXX)
+  project(LogIt CXX C)
 else()
-  project(LogIt LANGUAGES C CXX)
+  project(LogIt LANGUAGES CXX C)
 endif()
 
 # C++11 as standard
