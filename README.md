@@ -21,7 +21,7 @@
  */
 --->
 
-linux (by travis-ci.org) [![Build Status](https://travis-ci.org/quasar-team/LogIt.svg?branch=appveyor-ci-build)](https://travis-ci.org/quasar-team/LogIt)
+linux (by travis-ci.org) [![Build Status](https://travis-ci.org/quasar-team/LogIt.svg?branch=travis-ci-build)](https://travis-ci.org/quasar-team/LogIt)
 
 # LogIt
 LogIt is designed to be a high performance, flexible, thread-safe and cross platform logging solution for C++ projects
