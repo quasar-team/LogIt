@@ -31,6 +31,7 @@ message(STATUS "CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES [${CMAKE_CXX_IMPLICIT_INC
 #
 set(BOOST_INCLUDEDIR "/usr/include/")
 set(BOOST_LIBRARYDIR "/usr/lib64/")
+set(Boost_DEBUG ON)
 
 set(CMAKE_FIND_LIBRARY_SUFFIXES ".so")
 set(CMAKE_FIND_LIBRARY_PREFIXES "lib")
@@ -44,5 +45,5 @@ else()
 	message(STATUS "Found system boost, version [${Boost_VERSION}], include dir [${Boost_INCLUDE_DIRS}] library dir [${Boost_LIBRARY_DIRS}], libs [${Boost_LIBRARIES}]")
 endif()	
 
-#include( ${Boost_INCLUDE_DIRS} )
+include( ${Boost_INCLUDE_DIRS} )
 set( BOOST_LIBS ${Boost_LIBRARIES} )
