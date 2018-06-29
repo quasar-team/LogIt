@@ -29,12 +29,12 @@ message(STATUS "CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES [${CMAKE_CXX_IMPLICIT_INC
 # no boost libs are found. Possibly fixed in some later version, but not in
 # cmake v2.8's FindBoost package
 #
-#set(BOOST_INCLUDEDIR "/usr/include/")
-#set(BOOST_LIBRARYDIR "/usr/lib64/")
+set(BOOST_INCLUDEDIR "/usr/include/")
+set(BOOST_LIBRARYDIR "/usr/lib/x86_64-linux-gnu")
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_DEBUG ON)
 
-set(CMAKE_FIND_LIBRARY_SUFFIXES ".so")
+set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
 set(CMAKE_FIND_LIBRARY_PREFIXES "lib")
 
 find_package(Boost REQUIRED
