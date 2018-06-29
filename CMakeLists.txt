@@ -15,10 +15,8 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Author: Ben Farnham <ben.farnham@cern.ch>
+project(LogIt CXX)
 cmake_minimum_required(VERSION 2.8)
-enable_language( C )
-enable_language( CXX )
-project(LogIt)
 
 # C++11 as standard
 set (CMAKE_CXX_STANDARD 11) # works for CMake v3.1+

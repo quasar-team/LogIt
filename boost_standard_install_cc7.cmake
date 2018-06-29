@@ -16,12 +16,10 @@
 
 # Authors:
 # Ben Farnham <firstNm.secondNm@cern.ch>
-
-cmake_minimum_required(VERSION 2.8)
-#project(FindSystemBoost)
-#enable_language( C )
-#enable_language( CXX )
+cmake_minimum_required( VERSION 2.8 )
+#project( FindSystemBoost CXX )
 message(STATUS "Using file [boost_standard_install_cc7.cmake] toolchain file")
+
 message(STATUS "CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES [${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES}]")
 
 #
@@ -30,11 +28,9 @@ message(STATUS "CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES [${CMAKE_CXX_IMPLICIT_INC
 # cmake v2.8's FindBoost package
 #
 set(BOOST_INCLUDEDIR "/usr/include/")
-set(BOOST_LIBRARYDIR "/usr/lib/x86_64-linux-gnu")
-set(Boost_USE_STATIC_LIBS ON)
-set(Boost_DEBUG ON)
+set(BOOST_LIBRARYDIR "/usr/lib64/")
 
-set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+set(CMAKE_FIND_LIBRARY_SUFFIXES ".so")
 set(CMAKE_FIND_LIBRARY_PREFIXES "lib")
 
 find_package(Boost REQUIRED
