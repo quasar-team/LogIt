@@ -21,7 +21,8 @@
  */
 --->
 
-[![Build status](https://ci.appveyor.com/api/projects/status/qv7x4sy08bdsy4ct/branch/appveyor-ci-build?svg=true)](https://ci.appveyor.com/project/ben-farnham/logit/branch/appveyor-ci-build)
+linux (by travis-ci.org) [![Build Status](https://travis-ci.org/quasar-team/LogIt.svg?branch=master)](https://travis-ci.org/quasar-team/LogIt)
+windows (by appveyor.org) [![Build status](https://ci.appveyor.com/api/projects/status/qv7x4sy08bdsy4ct/branch/master?svg=true)](https://ci.appveyor.com/project/ben-farnham/logit/branch/master)
 
 # LogIt
 LogIt is designed to be a high performance, flexible, thread-safe and cross platform logging solution for C++ projects
