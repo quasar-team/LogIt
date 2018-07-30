@@ -38,7 +38,7 @@ endif()
 message(STATUS "Boost - libraries will be linked from [$ENV{BOOST_PATH_LIBS}]")
 
 function( find_boost_static_library LIBRARY_IDENTIFIER LIBRARY_FILE_NAME)
-	SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+	SET(CMAKE_FIND_LIBRARY_SUFFIXES ".so")
 	SET(CMAKE_FIND_LIBRARY_PREFIXES "")
 
 	find_library(${LIBRARY_IDENTIFIER} NAMES ${LIBRARY_FILE_NAME} PATHS $ENV{BOOST_PATH_LIBS}  NO_DEFAULT_PATH)
@@ -58,4 +58,5 @@ find_boost_static_library( libboostthread libboost_thread)
 find_boost_static_library( libboostlog libboost_log)
 find_boost_static_library( libboostlogsetup libboost_log_setup)
 
+set( CMAKE_SKIP_RPATH TRUE )
 set( BOOST_LIBS ${libboostlogsetup} ${libboostlog} ${libboostsystem} ${libboostfilesystem} ${libboostthread} ${libboostprogramoptions} ${libboostchrono} ${libboostdatetime} -lrt)
