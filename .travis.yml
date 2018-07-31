@@ -11,9 +11,9 @@ before_install:
 script:
  - docker run  --interactive --tty bfarnham/quasar:quasar-open62541 /bin/sh -c "
      echo '********************************************************************' ;
-     echo branch $TRAVIS_BRANCH ;
+     echo branch ${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH} ;
      echo '********************************************************************' ;
-     git clone -b $TRAVIS_BRANCH https://github.com/quasar-team/LogIt.git ;
+     git clone -b ${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH} https://github.com/quasar-team/LogIt.git ;
      mkdir LogIt/build-release && cd LogIt/build-release ;
      export BOOST_PATH_HEADERS=/usr/include/ ;
      export BOOST_PATH_LIBS=/usr/lib/x86_64-linux-gnu/ ;
