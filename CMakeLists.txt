@@ -18,22 +18,11 @@
 project(LogIt CXX)
 cmake_minimum_required(VERSION 2.8)
 
-# C++11 as standard
-set (CMAKE_CXX_STANDARD 11) # works for CMake v3.1+
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11") #for older CMake versions
-
-#
-# Load stand-alone build toolchain file (used for defining build-specific boost (BOOST_LIBS), amongst other things)
-#
-if(DEFINED CMAKE_TOOLCHAIN_FILE)
-  message("CMAKE_TOOLCHAIN_FILE is defined -- including [[${CMAKE_TOOLCHAIN_FILE}]]")
-  include(${CMAKE_TOOLCHAIN_FILE})
-endif()
-if( NOT BOOST_LIBS )
-  message(FATAL_ERROR "Required variable BOOST_LIBS has not been defined. You must define a toolchain file describing (as a minimum) how boost headers/libs are resolved in the target build environment")
-endif()
-message(STATUS "Using boost libraries: BOOST_LIBS [${BOOST_LIBS}]")
-link_directories( ${Boost_LIBRARY_DIRS} )
+option(LOGIT_BACKEND_STDOUTLOG "The basic back-end: logs to stdout" ON )
+option(LOGIT_BACKEND_BOOSTLOG "Rotating file logger back-end: fixed size on disk based on boost logging library" OFF )
+option(LOGIT_BACKEND_UATRACE "UnifiedAutomation toolkit logger" OFF )
+# handle binary library build (builds with -DLOGIT_BUILD_SHARED_LIB=ON)
+option(LOGIT_BUILD_SHARED_LIB "Build a LogIt shared library if ON (otherwise builds an object library)" OFF )
 
 set(LOGIT_SOURCES
     src/LogIt.cpp
@@ -43,12 +32,6 @@ set(LOGIT_SOURCES
     src/ComponentAttributes.cpp
     src/LogItInstance.cpp
 )
-include_directories( include )
-set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
-
-option(LOGIT_BACKEND_STDOUTLOG "The basic back-end: logs to stdout" ON )
-option(LOGIT_BACKEND_BOOSTLOG "Rotating file logger back-end: fixed size on disk based on boost logging library" OFF )
-option(LOGIT_BACKEND_UATRACE "UnifiedAutomation toolkit logger" OFF )
 
 if( LOGIT_BACKEND_STDOUTLOG )
     add_definitions(-DLOGIT_BACKEND_STDOUTLOG)
@@ -68,11 +51,28 @@ endif()
 MESSAGE( STATUS "building LogIt from source files [${LOGIT_SOURCES}]" )
 MESSAGE( STATUS "LogIt build options: LOGIT_BUILD_SHARED_LIB [${LOGIT_BUILD_SHARED_LIB}], backends: LOGIT_BACKEND_STDOUTLOG [${LOGIT_BACKEND_STDOUTLOG}] LOGIT_BACKEND_BOOSTLOG [${LOGIT_BACKEND_BOOSTLOG}] LOGIT_BACKEND_UATRACE [${LOGIT_BACKEND_UATRACE}]" )
 
-# handle binary library build (builds with -DLOGIT_BUILD_SHARED_LIB=ON)
-option(LOGIT_BUILD_SHARED_LIB "Build a LogIt shared library if ON (otherwise builds an object library)" OFF )
-if(LOGIT_BUILD_SHARED_LIB)
+if(NOT LOGIT_BUILD_SHARED_LIB)
+  add_library (LogIt OBJECT ${LOGIT_SOURCES})
+else()
+  # C++11 as standard
+  set (CMAKE_CXX_STANDARD 11) # works for CMake v3.1+
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11") #for older CMake versions
+  set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+
+  include_directories( include )
+
+  #
+  # Load stand-alone build toolchain file (used for defining build-specific boost (BOOST_LIBS), amongst other things)
+  #
+  if(DEFINED CMAKE_TOOLCHAIN_FILE)
+    message("CMAKE_TOOLCHAIN_FILE is defined -- including [[${CMAKE_TOOLCHAIN_FILE}]]")
+    include(${CMAKE_TOOLCHAIN_FILE})
+  endif()
+  if( NOT DEFINED BOOST_LIBS )
+    message(FATAL_ERROR "Required variable BOOST_LIBS has not been defined. You must define a toolchain file describing (as a minimum) how boost headers/libs are resolved in the target build environment")
+  endif()
+  message(STATUS "Using boost libraries: BOOST_LIBS [${BOOST_LIBS}]")
+
   add_library( LogIt SHARED ${LOGIT_SOURCES} )
   target_link_libraries( LogIt ${BOOST_LIBS} )
-else()
-  add_library (LogIt OBJECT ${LOGIT_SOURCES})
 endif()
