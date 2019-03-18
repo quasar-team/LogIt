@@ -18,6 +18,7 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with Quasar.  If not, see <http://www.gnu.org/licenses/>.
  */
+#ifdef _WIN32 // This LogIt back-end only applies to MS windows platforms
 #include <WindowsDebuggerSink.h>
 #include <iostream>
 #include <windows.h>
@@ -32,3 +33,4 @@ void WindowsDebuggerSink::logMessage(const std::string& msg)
 {
 	::OutputDebugString(msg.c_str());
 }
+#endif // _WIN32

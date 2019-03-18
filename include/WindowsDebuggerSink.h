@@ -22,6 +22,7 @@
 #ifndef LOGIT_INCLUDE_WINDOWS_DEBUGGER_SINK_H_
 #define LOGIT_INCLUDE_WINDOWS_DEBUGGER_SINK_H_
 
+#ifdef _WIN32 // This LogIt back-end only applies to MS windows platforms
 #include <LogSinkInterface.h>
 
 class WindowsDebuggerSink: public LogSinkInterface
@@ -31,5 +32,6 @@ public:
     virtual bool initialize();
     virtual void logMessage(const std::string& msg);
 };
+#endif // _WIN32
 
 #endif //LOGIT_INCLUDE_WINDOWS_DEBUGGER_SINK_H_
