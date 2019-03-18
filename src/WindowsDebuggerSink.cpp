@@ -21,6 +21,7 @@
 #ifdef _WIN32 // This LogIt back-end only applies to MS windows platforms
 #include <WindowsDebuggerSink.h>
 #include <iostream>
+#include <sstream>
 #include <windows.h>
 
 bool WindowsDebuggerSink::initialize()
@@ -31,6 +32,8 @@ bool WindowsDebuggerSink::initialize()
 
 void WindowsDebuggerSink::logMessage(const std::string& msg)
 {
-	::OutputDebugString(msg.c_str());
+	std::ostringstream out;
+	out << msg << "\n";
+	::OutputDebugString(out.str().c_str());
 }
 #endif // _WIN32
