@@ -42,6 +42,12 @@ using std::string;
 #include <UaTraceSink.h>
 #endif
 
+#ifdef LOGIT_BACKEND_WINDOWS_DEBUGGER
+#ifdef _WIN32 // back-end only relevant to windows
+#include <WindowsDebuggerSink.h>
+#endif
+#endif
+
 // internal - not exposed via API
 void initializeSinks()
 {
@@ -64,6 +70,14 @@ void initializeSinks()
     uaTraceSink->initialize();
     LogItInstance::getInstance()->m_logSinksInstance.addSink(uaTraceSink);
     #endif
+
+	#ifdef LOGIT_BACKEND_WINDOWS_DEBUGGER
+	#ifdef _WIN32 // back-end only relevant to windows
+    WindowsDebuggerSink * windowsDebuggerSink = new WindowsDebuggerSink ();
+    windowsDebuggerSink->initialize();
+	LogItInstance::getInstance()->m_logSinksInstance.addSink(windowsDebuggerSink);
+	#endif
+	#endif
 }
 
 
