@@ -69,6 +69,7 @@ void BoostRotatingFileLog::addFileSink()
 {
     boost::shared_ptr<text_file_backend> fileBackend = boost::make_shared<text_file_backend>(
             keywords::file_name = fileNamePattern,
+	    keywords::open_mode = std::ios_base::app, // append
             keywords::rotation_size = maxLogFileSizeBytes,
             keywords::time_based_rotation = sinks::file::rotation_at_time_point(12, 0, 0) );
 
