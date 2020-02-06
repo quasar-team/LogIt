@@ -95,4 +95,7 @@ else()
     message( FATAL "LOGIT_BUILD_STAND_ALONE but neither [LOGIT_BUILD_STATIC_LIB] nor [LOGIT_BUILD_SHARED_LIB] defined. Please define STATIC/SHARED" )
   endif()
   target_link_libraries( LogIt ${BOOST_LIBS} )
+
+  install( TARGETS LogIt DESTINATION lib )
+  install( DIRECTORY include DESTINATION include )
 endif()
