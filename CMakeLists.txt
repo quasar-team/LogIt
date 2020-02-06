@@ -97,5 +97,5 @@ else()
   target_link_libraries( LogIt ${BOOST_LIBS} )
 
   install( TARGETS LogIt DESTINATION lib )
-  install( DIRECTORY include DESTINATION include )
+  install( DIRECTORY include DESTINATION LogIt )
 endif()
