@@ -57,28 +57,42 @@ endif()
 MESSAGE( STATUS "building LogIt from source files [${LOGIT_SOURCES}]" )
 MESSAGE( STATUS "LogIt build options: LOGIT_BUILD_SHARED_LIB [${LOGIT_BUILD_SHARED_LIB}], backends: LOGIT_BACKEND_STDOUTLOG [${LOGIT_BACKEND_STDOUTLOG}] LOGIT_BACKEND_BOOSTLOG [${LOGIT_BACKEND_BOOSTLOG}] LOGIT_BACKEND_UATRACE [${LOGIT_BACKEND_UATRACE}] LOGIT_BACKEND_WINDOWS_DEBUGGER [${LOGIT_BACKEND_WINDOWS_DEBUGGER}]" )
 
-if(NOT LOGIT_BUILD_SHARED_LIB)
+if(NOT LOGIT_BUILD_STAND_ALONE)
   add_library (LogIt OBJECT ${LOGIT_SOURCES})
 else()
-  # C++11 as standard
-  set (CMAKE_CXX_STANDARD 11) # works for CMake v3.1+
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11") #for older CMake versions
+  #
+  # common settings for static/shared library compilation
+  #
   set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
-
+  set (CMAKE_CXX_STANDARD 11)
   include_directories( include )
 
   #
-  # Load stand-alone build toolchain file (used for defining build-specific boost (BOOST_LIBS), amongst other things)
+  # resolve boost dependencies
   #
   if(DEFINED CMAKE_TOOLCHAIN_FILE)
-    message("CMAKE_TOOLCHAIN_FILE is defined -- including [[${CMAKE_TOOLCHAIN_FILE}]]")
+    message("CMAKE_TOOLCHAIN_FILE is defined -- including [${CMAKE_TOOLCHAIN_FILE}]")
     include(${CMAKE_TOOLCHAIN_FILE})
+  else()
+    message("CMAKE_TOOLCHAIN_FILE not defined - using default [boost_standard_install.cmake]")
+    include(boost_standard_install.cmake)
   endif()
   if( NOT DEFINED BOOST_LIBS )
-    message(FATAL_ERROR "Required variable BOOST_LIBS has not been defined. You must define a toolchain file describing (as a minimum) how boost headers/libs are resolved in the target build environment")
+    message(FATAL_ERROR "Required variable BOOST_LIBS not defined. boost headers/libs must be resolved for build environment")
   endif()
   message(STATUS "Using boost libraries: BOOST_LIBS [${BOOST_LIBS}]")
 
-  add_library( LogIt SHARED ${LOGIT_SOURCES} )
+  #
+  # create target library
+  #
+  if(LOGIT_BUILD_STATIC_LIB)
+    message( STATUS "Building LogIt as a stand-alone static library" )
+    add_library( LogIt STATIC ${LOGIT_SOURCES} )
+  elseif(LOGIT_BUILD_SHARED_LIB)
+    message( STATUS "Building LogIt as a stand-alone shared library" )
+    add_library( LogIt SHARED ${LOGIT_SOURCES} )
+  else()
+    message( FATAL "LOGIT_BUILD_STAND_ALONE but neither [LOGIT_BUILD_STATIC_LIB] nor [LOGIT_BUILD_SHARED_LIB] defined. Please define STATIC/SHARED" )
+  endif()
   target_link_libraries( LogIt ${BOOST_LIBS} )
 endif()
