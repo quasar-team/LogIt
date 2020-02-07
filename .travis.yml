@@ -17,7 +17,7 @@ script:
      mkdir LogIt/build-release && cd LogIt/build-release ;
      export BOOST_PATH_HEADERS=/usr/include/ ;
      export BOOST_PATH_LIBS=/usr/lib/x86_64-linux-gnu/ ;
-     cmake .. -DCMAKE_BUILD_TYPE=RELEASE -DLOGIT_BUILD_SHARED_LIB=ON -DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON -DCMAKE_TOOLCHAIN_FILE=../boost_travis.cmake ;
-     make clean && make ;
+     cmake .. -DCMAKE_BUILD_TYPE=RELEASE -DLOGIT_BUILD_STAND_ALONE=ON -DLOGIT_BUILD_SHARED_LIB=ON -DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON ;
+     cmake --build . ;
      exit ;
      "
