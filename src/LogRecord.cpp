@@ -38,7 +38,7 @@ using boost::posix_time::microsec_clock;
 
 using std::string;
 
-const string g_sTimestampFormat = "%Y-%m-%d %H:%M.%s";
+const string g_sTimestampFormat = "%Y-%m-%d %H:%M:%s";
 
 LogRecord::LogRecord(const string& file, const int& line, const Log::LOG_LEVEL& level)
 {
