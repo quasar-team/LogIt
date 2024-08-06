@@ -83,8 +83,10 @@ else()
   endif()
   if( NOT DEFINED BOOST_LIBS AND LOGIT_BACKEND_BOOSTLOG ON)
     message(FATAL_ERROR "Required variable BOOST_LIBS not defined. boost headers/libs must be resolved for build environment")
+  else()
+    message(STATUS "Using boost libraries: BOOST_LIBS [${BOOST_LIBS}]")
+    target_link_libraries( LogIt ${BOOST_LIBS} )
   endif()
-  message(STATUS "Using boost libraries: BOOST_LIBS [${BOOST_LIBS}]")
 
   #
   # create target library
@@ -98,8 +100,41 @@ else()
   else()
     message( FATAL "LOGIT_BUILD_STAND_ALONE but neither [LOGIT_BUILD_STATIC_LIB] nor [LOGIT_BUILD_SHARED_LIB] defined. Please define STATIC/SHARED" )
   endif()
-  target_link_libraries( LogIt ${BOOST_LIBS} )
 
-  install( TARGETS LogIt DESTINATION lib )
+  install( TARGETS LogIt
+           EXPORT LogItTargets
+           LIBRARY DESTINATION lib
+           ARCHIVE DESTINATION lib
+           RUNTIME DESTINATION bin
+           INCLUDES DESTINATION include
+  )
   install( DIRECTORY include/ DESTINATION include )
+
+  # Export the targets to a script
+  install(EXPORT LogItTargets
+          FILE LogItTargets.cmake
+          NAMESPACE LogIt::
+          DESTINATION lib/cmake/LogIt
+  )
+
+  # Create a ConfigVersion.cmake file
+  include(CMakePackageConfigHelpers)
+  write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/LogItConfigVersion.cmake"
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY AnyNewerVersion
+  )
+
+  # Create a Config.cmake file
+  configure_file(LogItConfig.cmake.in
+                 "${CMAKE_CURRENT_BINARY_DIR}/LogItConfig.cmake"
+                 @ONLY
+  )
+
+  # Install the Config and ConfigVersion files
+  install(FILES
+          "${CMAKE_CURRENT_BINARY_DIR}/LogItConfig.cmake"
+          "${CMAKE_CURRENT_BINARY_DIR}/LogItConfigVersion.cmake"
+          DESTINATION lib/cmake/LogIt
+  )
 endif()
