@@ -53,8 +53,13 @@ LogRecord::~LogRecord()
 
 std::ostringstream& LogRecord::initializeStream(const string& file, const int& line, const Log::LOG_LEVEL& level)
 {
-    std::time_t t = std::time(nullptr);
-    m_stream << std::put_time(std::localtime(&t), g_sTimestampFormat.c_str()) << " [" << stripDirectory(file) << ":" << line << ", " << Log::logLevelToString(level);
+    auto now = std::chrono::system_clock::now();
+    auto now_time_t = std::chrono::system_clock::to_time_t(now);
+    auto now_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
+
+    m_stream << std::put_time(std::localtime(&now_time_t), g_sTimestampFormat.c_str()) 
+        << '.' << std::setw(6) << std::setfill('0') << now_ms.count()
+        << " [" << stripDirectory(file) << ":" << line << ", " << Log::logLevelToString(level);
     return m_stream;
 }
 
