@@ -101,40 +101,6 @@ else()
     message( FATAL "LOGIT_BUILD_STAND_ALONE but neither [LOGIT_BUILD_STATIC_LIB] nor [LOGIT_BUILD_SHARED_LIB] defined. Please define STATIC/SHARED" )
   endif()
 
-  install( TARGETS LogIt
-           EXPORT LogItTargets
-           LIBRARY DESTINATION lib
-           ARCHIVE DESTINATION lib
-           RUNTIME DESTINATION bin
-           INCLUDES DESTINATION include
-  )
+  install( TARGETS LogIt DESTINATION lib )
   install( DIRECTORY include/ DESTINATION include )
-
-  # Export the targets to a script
-  install(EXPORT LogItTargets
-          FILE LogItTargets.cmake
-          NAMESPACE LogIt::
-          DESTINATION lib/cmake/LogIt
-  )
-
-  # Create a ConfigVersion.cmake file
-  include(CMakePackageConfigHelpers)
-  write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/LogItConfigVersion.cmake"
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY AnyNewerVersion
-  )
-
-  # Create a Config.cmake file
-  configure_file(LogItConfig.cmake.in
-                 "${CMAKE_CURRENT_BINARY_DIR}/LogItConfig.cmake"
-                 @ONLY
-  )
-
-  # Install the Config and ConfigVersion files
-  install(FILES
-          "${CMAKE_CURRENT_BINARY_DIR}/LogItConfig.cmake"
-          "${CMAKE_CURRENT_BINARY_DIR}/LogItConfigVersion.cmake"
-          DESTINATION lib/cmake/LogIt
-  )
 endif()
