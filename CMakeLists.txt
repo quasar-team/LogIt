@@ -69,8 +69,18 @@ message( STATUS "LogIt build options: LOGIT_BUILD_SHARED_LIB [${LOGIT_BUILD_SHAR
 if(NOT LOGIT_BUILD_STAND_ALONE)
   add_library (LogIt OBJECT ${LOGIT_SOURCES})
 else()
-
-
+  #
+  # create target library
+  #
+  if(LOGIT_BUILD_STATIC_LIB)
+    message( STATUS "Building LogIt as a stand-alone static library" )
+    add_library( LogIt STATIC ${LOGIT_SOURCES} )
+  elseif(LOGIT_BUILD_SHARED_LIB)
+    message( STATUS "Building LogIt as a stand-alone shared library" )
+    add_library( LogIt SHARED ${LOGIT_SOURCES} )
+  else()
+    message( FATAL "LOGIT_BUILD_STAND_ALONE but neither [LOGIT_BUILD_STATIC_LIB] nor [LOGIT_BUILD_SHARED_LIB] defined. Please define STATIC/SHARED" )
+  endif()
   #
   # resolve boost dependencies
   #
@@ -90,18 +100,6 @@ else()
     endif()
   endif()
 
-  #
-  # create target library
-  #
-  if(LOGIT_BUILD_STATIC_LIB)
-    message( STATUS "Building LogIt as a stand-alone static library" )
-    add_library( LogIt STATIC ${LOGIT_SOURCES} )
-  elseif(LOGIT_BUILD_SHARED_LIB)
-    message( STATUS "Building LogIt as a stand-alone shared library" )
-    add_library( LogIt SHARED ${LOGIT_SOURCES} )
-  else()
-    message( FATAL "LOGIT_BUILD_STAND_ALONE but neither [LOGIT_BUILD_STATIC_LIB] nor [LOGIT_BUILD_SHARED_LIB] defined. Please define STATIC/SHARED" )
-  endif()
 
   install( TARGETS LogIt DESTINATION lib )
   install( DIRECTORY include/ DESTINATION include )
