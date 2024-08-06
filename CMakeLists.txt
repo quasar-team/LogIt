@@ -15,8 +15,15 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Author: Ben Farnham <ben.farnham@cern.ch>
+cmake_minimum_required(VERSION 3.26)
 project(LogIt CXX)
-cmake_minimum_required(VERSION 2.8)
+
+#
+# common settings for static/shared library compilation
+#
+set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(LOGIT_BACKEND_STDOUTLOG "The basic back-end: logs to stdout" ON )
 option(LOGIT_BACKEND_BOOSTLOG "Rotating file logger back-end: fixed size on disk based on boost logging library" OFF )
@@ -24,6 +31,8 @@ option(LOGIT_BACKEND_UATRACE "UnifiedAutomation toolkit logger" OFF )
 option(LOGIT_BACKEND_WINDOWS_DEBUGGER "Windows debugger logger" OFF )
 # handle binary library build (builds with -DLOGIT_BUILD_SHARED_LIB=ON)
 option(LOGIT_BUILD_SHARED_LIB "Build a LogIt shared library if ON (otherwise builds an object library)" OFF )
+
+include_directories(include/)
 
 set(LOGIT_SOURCES
     src/LogIt.cpp
@@ -54,30 +63,25 @@ if( LOGIT_BACKEND_WINDOWS_DEBUGGER )
     set(LOGIT_SOURCES ${LOGIT_SOURCES} src/WindowsDebuggerSink.cpp)
 endif()
 
-MESSAGE( STATUS "building LogIt from source files [${LOGIT_SOURCES}]" )
-MESSAGE( STATUS "LogIt build options: LOGIT_BUILD_SHARED_LIB [${LOGIT_BUILD_SHARED_LIB}], backends: LOGIT_BACKEND_STDOUTLOG [${LOGIT_BACKEND_STDOUTLOG}] LOGIT_BACKEND_BOOSTLOG [${LOGIT_BACKEND_BOOSTLOG}] LOGIT_BACKEND_UATRACE [${LOGIT_BACKEND_UATRACE}] LOGIT_BACKEND_WINDOWS_DEBUGGER [${LOGIT_BACKEND_WINDOWS_DEBUGGER}]" )
+message( STATUS "building LogIt from source files [${LOGIT_SOURCES}]" )
+message( STATUS "LogIt build options: LOGIT_BUILD_SHARED_LIB [${LOGIT_BUILD_SHARED_LIB}], backends: LOGIT_BACKEND_STDOUTLOG [${LOGIT_BACKEND_STDOUTLOG}] LOGIT_BACKEND_BOOSTLOG [${LOGIT_BACKEND_BOOSTLOG}] LOGIT_BACKEND_UATRACE [${LOGIT_BACKEND_UATRACE}] LOGIT_BACKEND_WINDOWS_DEBUGGER [${LOGIT_BACKEND_WINDOWS_DEBUGGER}]" )
 
 if(NOT LOGIT_BUILD_STAND_ALONE)
   add_library (LogIt OBJECT ${LOGIT_SOURCES})
 else()
-  #
-  # common settings for static/shared library compilation
-  #
-  set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
-  set (CMAKE_CXX_STANDARD 11)
-  include_directories( include )
+
 
   #
   # resolve boost dependencies
   #
-  if(DEFINED CMAKE_TOOLCHAIN_FILE)
+  if(DEFINED CMAKE_TOOLCHAIN_FILE AND LOGIT_BACKEND_BOOSTLOG ON)
     message("CMAKE_TOOLCHAIN_FILE is defined -- including [${CMAKE_TOOLCHAIN_FILE}]")
     include(${CMAKE_TOOLCHAIN_FILE})
   else()
     message("CMAKE_TOOLCHAIN_FILE not defined - using default [boost_standard_install.cmake]")
     include(boost_standard_install.cmake)
   endif()
-  if( NOT DEFINED BOOST_LIBS )
+  if( NOT DEFINED BOOST_LIBS AND LOGIT_BACKEND_BOOSTLOG ON)
     message(FATAL_ERROR "Required variable BOOST_LIBS not defined. boost headers/libs must be resolved for build environment")
   endif()
   message(STATUS "Using boost libraries: BOOST_LIBS [${BOOST_LIBS}]")
