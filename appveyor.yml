@@ -1,6 +1,6 @@
 # version format
 version: 1.0.{build}
-image: Visual Studio 2017
+image: Visual Studio 2022
 clone_folder: C:\workspace\OPC-UA\LogIt
 build:
   verbosity: normal
@@ -44,7 +44,7 @@ install:
 
 build_script:
   - cmd : mkdir build-release && cd build-release
-  - cmd : cmake .. -DCMAKE_BUILD_TYPE=RELEASE -DLOGIT_BUILD_STAND_ALONE=ON -DLOGIT_BUILD_SHARED_LIB=ON -DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON -DCMAKE_TOOLCHAIN_FILE=boost_appveyor.cmake -G "Visual Studio 15 2017 Win64"
+  - cmd : cmake .. -DCMAKE_BUILD_TYPE=RELEASE -DLOGIT_BUILD_STAND_ALONE=ON -DLOGIT_BUILD_SHARED_LIB=ON -DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON -DCMAKE_TOOLCHAIN_FILE=boost_appveyor.cmake -G "Visual Studio 17 2022"
   - cmd : cmake --build . --config Release
   - cmd : cd ..
 

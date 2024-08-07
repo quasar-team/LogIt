@@ -23,22 +23,12 @@
 #include "LogItInstance.h"
 #include "LogIt.h"
 
-/**
- * Rather irritating - boost needed for generating time-stamp: GCC 4.8 has
- * omitted the C++11 std::get_time/put_time that would obviate this necessity.
- *
- * GCC 5+ does though.
- */
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/date_time/posix_time/posix_time_io.hpp>
-#include <boost/format.hpp>
-
-using boost::posix_time::time_facet;
-using boost::posix_time::microsec_clock;
+#include <chrono>
+#include <iomanip>
 
 using std::string;
 
-const string g_sTimestampFormat = "%Y-%m-%d %H:%M:%s";
+const string g_sTimestampFormat = "%Y-%m-%d %H:%M:%S";
 
 LogRecord::LogRecord(const string& file, const int& line, const Log::LOG_LEVEL& level)
 {
@@ -52,7 +42,7 @@ LogRecord::LogRecord(const string& file, const int& line, const Log::LOG_LEVEL& 
 
 LogRecord::LogRecord(const std::string& file, const int& line, const Log::LOG_LEVEL& level, const std::string& componentName)
 {
-	initializeStream(file, line, level)<<", "<<componentName<<"] ";
+    initializeStream(file, line, level)<<", "<<componentName<<"] ";
 }
 
 LogRecord::~LogRecord()
@@ -63,8 +53,13 @@ LogRecord::~LogRecord()
 
 std::ostringstream& LogRecord::initializeStream(const string& file, const int& line, const Log::LOG_LEVEL& level)
 {
-    m_stream.imbue(std::locale(m_stream.getloc(), new time_facet(g_sTimestampFormat.c_str())));
-    m_stream << microsec_clock::local_time() << " ["<<stripDirectory(file)<<":"<<line<<", "<<Log::logLevelToString(level);
+    const auto now = std::chrono::system_clock::now();
+    const auto now_time_t = std::chrono::system_clock::to_time_t(now);
+    const auto now_us = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()) % 1000000;
+
+    m_stream << std::put_time(std::localtime(&now_time_t), g_sTimestampFormat.c_str()) 
+        << '.' << std::setw(6) << std::setfill('0') << now_us.count()
+        << " [" << stripDirectory(file) << ":" << line << ", " << Log::logLevelToString(level);
     return m_stream;
 }
 
