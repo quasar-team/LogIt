@@ -15,7 +15,7 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Author: Ben Farnham <ben.farnham@cern.ch>
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.10)
 project(LogIt CXX)
 
 #
