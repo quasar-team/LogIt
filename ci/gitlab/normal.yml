@@ -19,9 +19,9 @@ Compile on Linux:
   stage: unstagged
   image: $ALMA_LATEST_IMAGE
   variables:
-    LOGIT_BACKEND_BOOSTLOG: "ON"
+    BOOST_HOME: "/boost"
   script:
-    - cmake -B build
+    - cmake -B build DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON 
     - cmake --build build --config Release
   artifacts:
     paths:
