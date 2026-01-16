@@ -11,3 +11,4 @@ Makefile
 *.so
 Debug/
 build/
+.env
