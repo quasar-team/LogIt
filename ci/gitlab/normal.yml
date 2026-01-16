@@ -1,0 +1,27 @@
+variables:
+  ALMA_LATEST_IMAGE: "gitlab-registry.cern.ch/quasar-team/images/alma-10-build:latest"
+  WINDOWS_LATEST_IMAGE: "gitlab-registry.cern.ch/quasar-team/images/win2025-build:latest"
+
+Compile on Windows:
+  stage: unstagged
+  image: $WINDOWS_LATEST_IMAGE
+  tags:
+    - win2025-container
+  script:
+    - cmake -B build
+    - cmake --build build --config Release
+  artifacts:
+    paths:
+      - build/
+    when: always
+
+Compile on Linux:
+  stage: unstagged
+  image: $ALMA_LATEST_IMAGE
+  script:
+    - cmake -B build
+    - cmake --build build --config Release
+  artifacts:
+    paths:
+      - build/
+    when: always
