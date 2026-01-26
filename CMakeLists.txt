@@ -25,14 +25,13 @@ set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-option(LOGIT_BACKEND_STDOUTLOG "The basic back-end: logs to stdout" ON )
-option(LOGIT_BACKEND_BOOSTLOG "Rotating file logger back-end: fixed size on disk based on boost logging library" OFF )
-option(LOGIT_BACKEND_UATRACE "UnifiedAutomation toolkit logger" OFF )
-option(LOGIT_BACKEND_WINDOWS_DEBUGGER "Windows debugger logger" OFF )
+option(LOGIT_BACKEND_STDOUTLOG "The basic back-end: logs to stdout" ON)
+option(LOGIT_BACKEND_BOOSTLOG "Rotating file logger back-end: fixed size on disk based on boost logging library" OFF)
+option(LOGIT_BACKEND_UATRACE "UnifiedAutomation toolkit logger" OFF)
+option(LOGIT_BACKEND_WINDOWS_DEBUGGER "Windows debugger logger" OFF)
 # handle binary library build (builds with -DLOGIT_BUILD_SHARED_LIB=ON)
-option(LOGIT_BUILD_SHARED_LIB "Build a LogIt shared library if ON (otherwise builds an object library)" OFF )
+option(LOGIT_BUILD_SHARED_LIB "Build a LogIt shared library if ON (otherwise builds an object library)" OFF)
 
-include_directories(include/)
 set(LOGIT_EXTRA_INCLUDE_DIRS "")
 set(LOGIT_EXTRA_LINK_LIBS "")
 
@@ -45,14 +44,14 @@ set(LOGIT_SOURCES
     src/LogItInstance.cpp
 )
 
-if( LOGIT_BACKEND_STDOUTLOG )
-    add_definitions(-DLOGIT_BACKEND_STDOUTLOG)
-    set(LOGIT_SOURCES ${LOGIT_SOURCES} src/StdOutLog.cpp)
+if(LOGIT_BACKEND_STDOUTLOG)
+    list(APPEND LOGIT_SOURCES src/StdOutLog.cpp)
+    list(APPEND LOGIT_DEFINITIONS LOGIT_BACKEND_STDOUTLOG)
 endif()
 
-if( LOGIT_BACKEND_BOOSTLOG )
-    add_definitions(-DLOGIT_BACKEND_BOOSTLOG)
-    set(LOGIT_SOURCES ${LOGIT_SOURCES} src/BoostRotatingFileLog.cpp)
+if(LOGIT_BACKEND_BOOSTLOG)
+    list(APPEND LOGIT_SOURCES src/BoostRotatingFileLog.cpp)
+    list(APPEND LOGIT_DEFINITIONS LOGIT_BACKEND_BOOSTLOG)
 
     set(BOOST_HOME "$ENV{BOOST_HOME}")
     if(NOT BOOST_HOME)
@@ -68,7 +67,7 @@ if( LOGIT_BACKEND_BOOSTLOG )
     endif()
 
     list(APPEND LOGIT_EXTRA_INCLUDE_DIRS "${BOOST_INCLUDE_DIR}")
-    foreach(_boost_lib boost_log )
+    foreach(_boost_lib boost_log)
         find_library(BOOST_${_boost_lib}_LIB NAMES "lib${_boost_lib}.a" PATHS "${BOOST_LIBRARY_DIR}" NO_DEFAULT_PATH)
         if(NOT BOOST_${_boost_lib}_LIB)
             message(FATAL_ERROR "Missing static Boost library lib${_boost_lib}.a in ${BOOST_LIBRARY_DIR}")
@@ -77,24 +76,34 @@ if( LOGIT_BACKEND_BOOSTLOG )
     endforeach()
 endif()
 
-if( LOGIT_BACKEND_UATRACE )
-    add_definitions(-DLOGIT_BACKEND_UATRACE)
-    set(LOGIT_SOURCES ${LOGIT_SOURCES} src/UaTraceSink.cpp)
+if(LOGIT_BACKEND_UATRACE)
+    list(APPEND LOGIT_SOURCES src/UaTraceSink.cpp)
+    list(APPEND LOGIT_DEFINITIONS LOGIT_BACKEND_UATRACE)
 endif()
 
-if( LOGIT_BACKEND_WINDOWS_DEBUGGER )
-    add_definitions(-DLOGIT_BACKEND_WINDOWS_DEBUGGER)
-    set(LOGIT_SOURCES ${LOGIT_SOURCES} src/WindowsDebuggerSink.cpp)
+if(LOGIT_BACKEND_WINDOWS_DEBUGGER)
+    list(APPEND LOGIT_SOURCES src/WindowsDebuggerSink.cpp)
+    list(APPEND LOGIT_DEFINITIONS LOGIT_BACKEND_WINDOWS_DEBUGGER)
 endif()
 
-message( STATUS "building LogIt from source files [${LOGIT_SOURCES}]" )
-message( STATUS "LogIt build options: LOGIT_BUILD_SHARED_LIB [${LOGIT_BUILD_SHARED_LIB}], backends: LOGIT_BACKEND_STDOUTLOG [${LOGIT_BACKEND_STDOUTLOG}] LOGIT_BACKEND_BOOSTLOG [${LOGIT_BACKEND_BOOSTLOG}] LOGIT_BACKEND_UATRACE [${LOGIT_BACKEND_UATRACE}] LOGIT_BACKEND_WINDOWS_DEBUGGER [${LOGIT_BACKEND_WINDOWS_DEBUGGER}]" )
+message( STATUS "Building LogIt from source files [${LOGIT_SOURCES}]")
+message( STATUS "LogIt build options: LOGIT_BUILD_SHARED_LIB [${LOGIT_BUILD_SHARED_LIB}], backends: LOGIT_BACKEND_STDOUTLOG [${LOGIT_BACKEND_STDOUTLOG}] LOGIT_BACKEND_BOOSTLOG [${LOGIT_BACKEND_BOOSTLOG}] LOGIT_BACKEND_UATRACE [${LOGIT_BACKEND_UATRACE}] LOGIT_BACKEND_WINDOWS_DEBUGGER [${LOGIT_BACKEND_WINDOWS_DEBUGGER}]")
 
-add_library (LogIt OBJECT ${LOGIT_SOURCES})
-
-if(LOGIT_EXTRA_INCLUDE_DIRS)
-  target_include_directories(LogIt PUBLIC ${LOGIT_EXTRA_INCLUDE_DIRS})
+if(LOGIT_BUILD_SHARED_LIB)
+    add_library(LogIt SHARED ${LOGIT_SOURCES})
+else()
+    add_library(LogIt OBJECT ${LOGIT_SOURCES})
 endif()
+
+target_include_directories(LogIt
+    PUBLIC
+        ${LOGIT_EXTRA_INCLUDE_DIRS}
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+if(LOGIT_DEFINITIONS)
+    target_compile_definitions(LogIt PUBLIC ${LOGIT_DEFINITIONS})
+endif()
+
 if(LOGIT_EXTRA_LINK_LIBS)
-  target_link_libraries(LogIt PUBLIC ${LOGIT_EXTRA_LINK_LIBS})
+    target_link_libraries(LogIt PUBLIC ${LOGIT_EXTRA_LINK_LIBS})
 endif()
