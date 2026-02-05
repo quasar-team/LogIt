@@ -15,13 +15,37 @@ Compile on Windows:
       - build/
     when: always
 
-Compile on Linux:
+Compile on Linux STDOUT:
+  stage: unstagged
+  image: $ALMA_LATEST_IMAGE
+  script:
+    - cmake -B build -DLOGIT_BACKEND_STDOUTLOG=ON 
+    - cmake --build build --config Release
+  artifacts:
+    paths:
+      - build/
+    when: always
+
+Compile on Linux STDOUT and BOOST:
   stage: unstagged
   image: $ALMA_LATEST_IMAGE
   variables:
-    BOOST_HOME: "/boost"
+    BOOST_HOME: "/opt/boost"
   script:
-    - cmake -B build DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON 
+    - cmake -B build -DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON 
+    - cmake --build build --config Release
+  artifacts:
+    paths:
+      - build/
+    when: always
+
+Compile on Linux STDOUT and UATRACE:
+  stage: unstagged
+  image: $ALMA_LATEST_IMAGE
+  variables:
+    UNIFIED_AUTOMATION_HOME: "/opt/unified-automation"
+  script:
+    - cmake -B build -DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_UATRACE=ON
     - cmake --build build --config Release
   artifacts:
     paths:
