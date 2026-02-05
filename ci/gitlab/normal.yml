@@ -2,13 +2,56 @@ variables:
   ALMA_LATEST_IMAGE: "gitlab-registry.cern.ch/quasar-team/images/alma-10-build:latest"
   WINDOWS_LATEST_IMAGE: "gitlab-registry.cern.ch/quasar-team/images/win2025-build:latest"
   
-Compile on Windows:
+Compile on Windows STDOUT:
   stage: unstagged
   image: $WINDOWS_LATEST_IMAGE
   tags:
     - win2025-container
   script:
-    - cmake -B build
+    - cmake -B build -DLOGIT_BACKEND_STDOUTLOG=ON
+    - cmake --build build --config Release
+  artifacts:
+    paths:
+      - build/
+    when: always
+
+Compile on Windows STDOUT and BOOST:
+  stage: unstagged
+  image: $WINDOWS_LATEST_IMAGE
+  tags:
+    - win2025-container
+  variables:
+    BOOST_HOME: "C:/boost"
+  script:
+    - cmake -B build -DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON
+    - cmake --build build --config Release
+  artifacts:
+    paths:
+      - build/
+    when: always
+
+Compile on Windows STDOUT and UATRACE:
+  stage: unstagged
+  image: $WINDOWS_LATEST_IMAGE
+  tags:
+    - win2025-container
+  variables:
+    UNIFIED_AUTOMATION_HOME: "C:/unified-automation"
+  script:
+    - cmake -B build -DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_UATRACE=ON
+    - cmake --build build --config Release
+  artifacts:
+    paths:
+      - build/
+    when: always
+
+Compile on Windows STDOUT and WINDOWS_DEBUGGER:
+  stage: unstagged
+  image: $WINDOWS_LATEST_IMAGE
+  tags:
+    - win2025-container
+  script:
+    - cmake -B build -DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_WINDOWS_DEBUGGER=ON
     - cmake --build build --config Release
   artifacts:
     paths:
