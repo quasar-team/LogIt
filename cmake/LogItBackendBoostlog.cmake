@@ -21,7 +21,7 @@ foreach(_boost_lib boost_log)
                 NAMES 
                     "lib${_boost_lib}.a" 
                     "lib${_boost_lib}.lib" 
-                    "lib${_boost_lib}-*.lib"
+                    "lib${_boost_lib}-*x64*.lib"
                 PATHS "${BOOST_LIBRARY_DIR}" NO_DEFAULT_PATH)
     if(NOT BOOST_${_boost_lib}_LIB)
         message(FATAL_ERROR "Missing static Boost library lib${_boost_lib}${CMAKE_STATIC_LIBRARY_SUFFIX} in ${BOOST_LIBRARY_DIR}")
