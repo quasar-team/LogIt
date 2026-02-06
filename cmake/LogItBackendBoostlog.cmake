@@ -17,7 +17,12 @@ endif()
 
 list(APPEND LOGIT_EXTRA_INCLUDE_DIRS "${BOOST_INCLUDE_DIR}")
 foreach(_boost_lib boost_log)
-    find_library(BOOST_${_boost_lib}_LIB NAMES "lib${_boost_lib}${CMAKE_STATIC_LIBRARY_SUFFIX}" PATHS "${BOOST_LIBRARY_DIR}" NO_DEFAULT_PATH)
+    find_library(BOOST_${_boost_lib}_LIB 
+                NAMES 
+                    "lib${_boost_lib}.a" 
+                    "lib${_boost_lib}.lib" 
+                    "lib${_boost_lib}-*.lib"
+                PATHS "${BOOST_LIBRARY_DIR}" NO_DEFAULT_PATH)
     if(NOT BOOST_${_boost_lib}_LIB)
         message(FATAL_ERROR "Missing static Boost library lib${_boost_lib}${CMAKE_STATIC_LIBRARY_SUFFIX} in ${BOOST_LIBRARY_DIR}")
     endif()
