@@ -3,29 +3,20 @@ list(APPEND LOGIT_DEFINITIONS LOGIT_BACKEND_BOOSTLOG)
 
 set(BOOST_HOME "$ENV{BOOST_HOME}")
 if(NOT BOOST_HOME)
-    message(FATAL_ERROR "LOGIT_BACKEND_BOOSTLOG requires BOOST_HOME to be set (e.g. /boost with include/ and lib/).")
+    message(FATAL_ERROR "LOGIT_BACKEND_BOOSTLOG requires BOOST_HOME to be set (e.g. /boost with lib/cmake/Boost-<version>/BoostConfig.cmake).")
 endif()
 
-set(BOOST_INCLUDE_DIR "${BOOST_HOME}/include")
-set(BOOST_LIBRARY_DIR "${BOOST_HOME}/lib")
-if(NOT EXISTS "${BOOST_INCLUDE_DIR}")
-    message(FATAL_ERROR "BOOST_HOME does not contain include/: ${BOOST_INCLUDE_DIR}")
-endif()
-if(NOT EXISTS "${BOOST_LIBRARY_DIR}")
-    message(FATAL_ERROR "BOOST_HOME does not contain lib/: ${BOOST_LIBRARY_DIR}")
+if(NOT EXISTS "${BOOST_HOME}")
+    message(FATAL_ERROR "BOOST_HOME does not exist: ${BOOST_HOME}")
 endif()
 
-list(APPEND LOGIT_EXTRA_INCLUDE_DIRS "${BOOST_INCLUDE_DIR}")
-foreach(_boost_lib boost_log)
-    find_library(BOOST_${_boost_lib}_LIB 
-                NAMES 
-                    "lib${_boost_lib}.a" 
-                    "lib${_boost_lib}.lib" 
-                    "lib${_boost_lib}-*x64*.lib"
-                PATHS "${BOOST_LIBRARY_DIR}" NO_DEFAULT_PATH)
-    if(NOT BOOST_${_boost_lib}_LIB)
-        message(FATAL_ERROR "Missing static Boost library lib${_boost_lib}${CMAKE_STATIC_LIBRARY_SUFFIX} in ${BOOST_LIBRARY_DIR}")
-    endif()
-    list(APPEND LOGIT_EXTRA_LINK_LIBS "${BOOST_${_boost_lib}_LIB}")
-endforeach()
+list(APPEND CMAKE_PREFIX_PATH "${BOOST_HOME}")
+set(Boost_USE_STATIC_LIBS ON)
+set(Boost_USE_STATIC_RUNTIME ON)
+find_package(Boost CONFIG REQUIRED COMPONENTS log)
 
+if(NOT TARGET Boost::log)
+    message(FATAL_ERROR "Boost CMake config did not provide Boost::log target.")
+endif()
+
+list(APPEND LOGIT_EXTRA_LINK_LIBS Boost::log)
