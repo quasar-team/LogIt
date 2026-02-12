@@ -1,96 +1,50 @@
-variables:
-  ALMA_LATEST_IMAGE: "gitlab-registry.cern.ch/quasar-team/images/alma-10-build:latest"
-  WINDOWS_LATEST_IMAGE: "gitlab-registry.cern.ch/quasar-team/images/win2025-build:latest"
-  
-Compile on Windows STDOUT:
+.exec_base:
   stage: unstagged
-  image: $WINDOWS_LATEST_IMAGE
+  artifacts:
+    paths:
+      - build/
+    when: always
+
+.exec_win:
+  extends: .exec_base
+  image: gitlab-registry.cern.ch/quasar-team/images/win2025-build:latest
   tags:
     - win2025-container
   script:
-    - cmake -B build -DLOGIT_BACKEND_STDOUTLOG=ON
+    - cmake -B build $env:CMAKE_FLAGS
     - cmake --build build --config Release
-  artifacts:
-    paths:
-      - build/
-    when: always
 
-Compile on Windows STDOUT and BOOST:
-  stage: unstagged
-  image: $WINDOWS_LATEST_IMAGE
-  tags:
-    - win2025-container
-  variables:
-    BOOST_HOME: "C:/boost"
+.exec_lin:
+  extends: .exec_base
+  image: gitlab-registry.cern.ch/quasar-team/images/alma-10-build:latest
   script:
-    - cmake -B build -DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON
+    - cmake -B build $CMAKE_FLAGS
     - cmake --build build --config Release
-  artifacts:
-    paths:
-      - build/
-    when: always
 
-Compile on Windows STDOUT and UATRACE:
-  stage: unstagged
-  image: $WINDOWS_LATEST_IMAGE
-  tags:
-    - win2025-container
-  variables:
-    UNIFIED_AUTOMATION_HOME: "C:/unified-automation"
-  script:
-    - cmake -B build -DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_UATRACE=ON
-    - cmake --build build --config Release
-  artifacts:
-    paths:
-      - build/
-    when: always
+Compile [Windows 2025]:
+  extends: .exec_win
+  parallel:
+    matrix:
+      - PROFILE: "STDOUT"
+        CMAKE_FLAGS: "-DLOGIT_BACKEND_STDOUTLOG=ON"
+      - PROFILE: "STDOUT + BOOST"
+        CMAKE_FLAGS: "-DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON"
+      - PROFILE: "STDOUT + UATRACE"
+        CMAKE_FLAGS: "-DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_UATRACE=ON"
+      - PROFILE: "STDOUT + WINDOWS_DEBUGGER"
+        CMAKE_FLAGS: "-DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_WINDOWS_DEBUGGER=ON"
+      - PROFILE: "ALL"
+        CMAKE_FLAGS: "-DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON -DLOGIT_BACKEND_UATRACE=ON -DLOGIT_BACKEND_WINDOWS_DEBUGGER=ON"
 
-Compile on Windows STDOUT and WINDOWS_DEBUGGER:
-  stage: unstagged
-  image: $WINDOWS_LATEST_IMAGE
-  tags:
-    - win2025-container
-  script:
-    - cmake -B build -DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_WINDOWS_DEBUGGER=ON
-    - cmake --build build --config Release
-  artifacts:
-    paths:
-      - build/
-    when: always
-
-Compile on Linux STDOUT:
-  stage: unstagged
-  image: $ALMA_LATEST_IMAGE
-  script:
-    - cmake -B build -DLOGIT_BACKEND_STDOUTLOG=ON 
-    - cmake --build build --config Release
-  artifacts:
-    paths:
-      - build/
-    when: always
-
-Compile on Linux STDOUT and BOOST:
-  stage: unstagged
-  image: $ALMA_LATEST_IMAGE
-  variables:
-    BOOST_HOME: "/opt/boost"
-  script:
-    - cmake -B build -DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON 
-    - cmake --build build --config Release
-  artifacts:
-    paths:
-      - build/
-    when: always
-
-Compile on Linux STDOUT and UATRACE:
-  stage: unstagged
-  image: $ALMA_LATEST_IMAGE
-  variables:
-    UNIFIED_AUTOMATION_HOME: "/opt/unified-automation"
-  script:
-    - cmake -B build -DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_UATRACE=ON
-    - cmake --build build --config Release
-  artifacts:
-    paths:
-      - build/
-    when: always
+Compile [Linux Alma10]:
+  extends: .exec_lin
+  parallel:
+    matrix:
+      - PROFILE: "STDOUT"
+        CMAKE_FLAGS: "-DLOGIT_BACKEND_STDOUTLOG=ON"
+      - PROFILE: "STDOUT + BOOST"
+        CMAKE_FLAGS: "-DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON"
+      - PROFILE: "STDOUT + UATRACE"
+        CMAKE_FLAGS: "-DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_UATRACE=ON"
+      - PROFILE: "ALL"
+        CMAKE_FLAGS: "-DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON -DLOGIT_BACKEND_UATRACE=ON -DLOGIT_BACKEND_WINDOWS_DEBUGGER=ON"
