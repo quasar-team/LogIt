@@ -21,6 +21,17 @@
     - cmake -B build $CMAKE_FLAGS
     - cmake --build build --config Release
 
+.exec_lin_system_boost:
+  extends: .exec_base
+  image: gitlab-registry.cern.ch/linuxsupport/alma10-base:latest
+  variables:
+    BOOST_HOME: "/usr"
+  script:
+    - dnf install -y boost-devel
+    - dnf install -y cmake gcc-c++ make
+    - cmake -B build $CMAKE_FLAGS
+    - cmake --build build --config Release
+
 Compile [Windows 2025]:
   extends: .exec_win
   parallel:
@@ -48,3 +59,9 @@ Compile [Linux Alma10]:
         CMAKE_FLAGS: "-DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_UATRACE=ON"
       - PROFILE: "ALL"
         CMAKE_FLAGS: "-DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON -DLOGIT_BACKEND_UATRACE=ON -DLOGIT_BACKEND_WINDOWS_DEBUGGER=ON"
+
+Compile [Linux Alma10 Base System Boost]:
+  extends: .exec_lin_system_boost
+  variables:
+    PROFILE: "STDOUT + BOOST (SYSTEM)"
+    CMAKE_FLAGS: "-DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON -DBoost_USE_STATIC_LIBS=OFF -DBoost_USE_STATIC_RUNTIME=OFF"
