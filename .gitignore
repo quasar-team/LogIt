@@ -12,3 +12,5 @@ Makefile
 Debug/
 build/
 .env
+.gitlab-ci-local
+
