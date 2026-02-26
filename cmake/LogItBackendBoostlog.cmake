@@ -1,22 +1,14 @@
 list(APPEND LOGIT_SOURCES src/BoostRotatingFileLog.cpp)
 list(APPEND LOGIT_DEFINITIONS LOGIT_BACKEND_BOOSTLOG)
 
-set(BOOST_HOME "$ENV{BOOST_HOME}")
-if(NOT BOOST_HOME)
-    message(FATAL_ERROR "LOGIT_BACKEND_BOOSTLOG requires BOOST_HOME to be set (e.g. /boost with lib/cmake/Boost-<version>/BoostConfig.cmake).")
-endif()
-
-if(NOT EXISTS "${BOOST_HOME}")
-    message(FATAL_ERROR "BOOST_HOME does not exist: ${BOOST_HOME}")
-endif()
-
-list(APPEND CMAKE_PREFIX_PATH "${BOOST_HOME}")
-if(NOT DEFINED Boost_USE_STATIC_LIBS)
+if(DEFINED ENV{BOOST_HOME})
+    message(STATUS "BOOST_HOME environment variable is set to: $ENV{BOOST_HOME}")
+    message(STATUS "this will set BOOST to that folder in static mode")
+    set(Boost_DIR $ENV{BOOST_HOME})
+    set(Boost_USE_STATIC_RUNTIME ON)
     set(Boost_USE_STATIC_LIBS ON)
 endif()
-if(NOT DEFINED Boost_USE_STATIC_RUNTIME)
-    set(Boost_USE_STATIC_RUNTIME ON)
-endif()
+
 find_package(Boost CONFIG REQUIRED COMPONENTS log)
 
 if(NOT TARGET Boost::log)
