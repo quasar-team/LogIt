@@ -11,3 +11,6 @@ Makefile
 *.so
 Debug/
 build/
+.env
+.gitlab-ci-local
+

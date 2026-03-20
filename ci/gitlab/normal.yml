@@ -1,0 +1,65 @@
+.exec_base:
+  stage: unstagged
+  artifacts:
+    paths:
+      - build/
+    when: always
+
+.exec_win:
+  extends: .exec_base
+  image: gitlab-registry.cern.ch/quasar-team/images/win2025-build:latest
+  tags:
+    - win2025-container
+  script:
+    - cmake -B build $env:CMAKE_FLAGS
+    - cmake --build build --config Release
+
+.exec_lin:
+  extends: .exec_base
+  image: gitlab-registry.cern.ch/quasar-team/images/alma-10-build:latest
+  script:
+    - cmake -B build $CMAKE_FLAGS
+    - cmake --build build --config Release
+
+.exec_lin_system_boost:
+  extends: .exec_base
+  image: gitlab-registry.cern.ch/linuxsupport/alma10-base:latest
+  script:
+    - dnf install -y boost-devel
+    - dnf install -y cmake gcc-c++ make
+    - cmake -B build $CMAKE_FLAGS
+    - cmake --build build --config Release
+
+Compile [Windows 2025]:
+  extends: .exec_win
+  parallel:
+    matrix:
+      - PROFILE: "STDOUT"
+        CMAKE_FLAGS: "-DLOGIT_BACKEND_STDOUTLOG=ON"
+      - PROFILE: "STDOUT + BOOST"
+        CMAKE_FLAGS: "-DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON"
+      - PROFILE: "STDOUT + UATRACE"
+        CMAKE_FLAGS: "-DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_UATRACE=ON"
+      - PROFILE: "STDOUT + WINDOWS_DEBUGGER"
+        CMAKE_FLAGS: "-DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_WINDOWS_DEBUGGER=ON"
+      - PROFILE: "ALL"
+        CMAKE_FLAGS: "-DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON -DLOGIT_BACKEND_UATRACE=ON -DLOGIT_BACKEND_WINDOWS_DEBUGGER=ON"
+
+Compile [Linux Alma10]:
+  extends: .exec_lin
+  parallel:
+    matrix:
+      - PROFILE: "STDOUT"
+        CMAKE_FLAGS: "-DLOGIT_BACKEND_STDOUTLOG=ON"
+      - PROFILE: "STDOUT + BOOST"
+        CMAKE_FLAGS: "-DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON"
+      - PROFILE: "STDOUT + UATRACE"
+        CMAKE_FLAGS: "-DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_UATRACE=ON"
+      - PROFILE: "ALL"
+        CMAKE_FLAGS: "-DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON -DLOGIT_BACKEND_UATRACE=ON -DLOGIT_BACKEND_WINDOWS_DEBUGGER=ON"
+
+Compile [Linux Alma10 Base System Boost]:
+  extends: .exec_lin_system_boost
+  variables:
+    PROFILE: "STDOUT + BOOST (SYSTEM)"
+    CMAKE_FLAGS: "-DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON"
