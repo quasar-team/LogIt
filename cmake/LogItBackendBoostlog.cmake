@@ -5,7 +5,6 @@ if(DEFINED ENV{BOOST_HOME})
     message(STATUS "BOOST_HOME environment variable is set to: $ENV{BOOST_HOME}")
     message(STATUS "this will set BOOST to that folder in static mode")
     set(Boost_DIR $ENV{BOOST_HOME})
-    set(Boost_USE_STATIC_RUNTIME ON)
     set(Boost_USE_STATIC_LIBS ON)
 endif()
 
