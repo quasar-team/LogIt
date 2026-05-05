@@ -17,7 +17,7 @@
 # Author: Ben Farnham <ben.farnham@cern.ch>
 # Author: Luis Miguens Fernandez <luis.miguens@cern.ch>
 
-cmake_minimum_required(VERSION 3.30)
+cmake_minimum_required(VERSION 3.26)
 project(LogIt CXX)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
