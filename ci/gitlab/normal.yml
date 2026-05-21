@@ -7,7 +7,7 @@
 
 .exec_win:
   extends: .exec_base
-  image: gitlab-registry.cern.ch/quasar-team/images/win2025-build:latest
+  image: gitlab-registry.cern.ch/jcop-opc-ua/common/images/win2025-build:latest
   tags:
     - win2025-container
   script:
@@ -16,7 +16,7 @@
 
 .exec_lin:
   extends: .exec_base
-  image: gitlab-registry.cern.ch/quasar-team/images/alma-10-build:latest
+  image: gitlab-registry.cern.ch/jcop-opc-ua/common/images/alma-10-build:latest
   script:
     - cmake -B build $CMAKE_FLAGS
     - cmake --build build --config Release
