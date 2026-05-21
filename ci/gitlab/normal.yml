@@ -63,3 +63,13 @@ Compile [Linux Alma10 Base System Boost]:
   variables:
     PROFILE: "STDOUT + BOOST (SYSTEM)"
     CMAKE_FLAGS: "-DLOGIT_BACKEND_STDOUTLOG=ON -DLOGIT_BACKEND_BOOSTLOG=ON"
+
+Compile [Linux LOGIT_BACKENDS stdout]:
+  extends: .exec_lin
+  variables:
+    LOGIT_BACKENDS: "LOGIT_BACKEND_STDOUTLOG"
+
+Compile [Linux LOGIT_BACKENDS stdout boost]:
+  extends: .exec_lin_system_boost
+  variables:
+    LOGIT_BACKENDS: "LOGIT_BACKEND_STDOUTLOG;LOGIT_BACKEND_BOOSTLOG"

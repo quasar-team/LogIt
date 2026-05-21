@@ -49,6 +49,20 @@ LOGIT_BACKEND_UATRACE            # default OFF
 LOGIT_BACKEND_WINDOWS_DEBUGGER   # default OFF
 ```
 
+Backend defaults can also be selected with the `LOGIT_BACKENDS` environment
+variable. It accepts a CMake list of backend option names:
+
+```bash
+LOGIT_BACKENDS=LOGIT_BACKEND_STDOUTLOG cmake -S . -B build
+LOGIT_BACKENDS='LOGIT_BACKEND_STDOUTLOG;LOGIT_BACKEND_BOOSTLOG' cmake -S . -B build
+LOGIT_BACKENDS=LOGIT_BACKEND_BOOSTLOG cmake -S . -B build -DLOGIT_BACKEND_STDOUTLOG=ON
+```
+
+When `LOGIT_BACKENDS` is set, listed backends default to `ON` and unlisted
+backends default to `OFF`. Explicit `-DLOGIT_BACKEND_*=...` CMake options, or
+values already present in an existing CMake cache, take precedence over the
+environment-derived defaults.
+
 ### 1. Stdout backend
 - Option: `-DLOGIT_BACKEND_STDOUTLOG=ON`
 - Extra dependencies: none
