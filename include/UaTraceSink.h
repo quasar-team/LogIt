@@ -31,9 +31,9 @@ class UaTraceSink: public LogSinkInterface
 {
 public:
 
-    virtual bool initialize();
+    virtual bool initialize() override;
 
-    virtual void logMessage(const std::string& msg);
+    virtual void logMessage(const std::string& msg) override;
 };
 
 
