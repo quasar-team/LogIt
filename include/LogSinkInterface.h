@@ -27,8 +27,8 @@
 class LogSinkInterface
 {
 public:
-    LogSinkInterface(){};
-    virtual ~LogSinkInterface(){};
+    LogSinkInterface(){}
+    virtual ~LogSinkInterface(){}
 
     /**
      * Expected to be called once on initialization.
