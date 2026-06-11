@@ -59,6 +59,9 @@ MESSAGE( STATUS "LogIt build options: LOGIT_BUILD_SHARED_LIB [${LOGIT_BUILD_SHAR
 
 if(NOT LOGIT_BUILD_STAND_ALONE)
   add_library (LogIt OBJECT ${LOGIT_SOURCES})
+  target_include_directories( LogIt PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include> )
 else()
   #
   # common settings for static/shared library compilation
@@ -94,6 +97,9 @@ else()
   else()
     message( FATAL "LOGIT_BUILD_STAND_ALONE but neither [LOGIT_BUILD_STATIC_LIB] nor [LOGIT_BUILD_SHARED_LIB] defined. Please define STATIC/SHARED" )
   endif()
+  target_include_directories( LogIt PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include> )
   target_link_libraries( LogIt ${BOOST_LIBS} )
 
   install( TARGETS LogIt DESTINATION lib )
