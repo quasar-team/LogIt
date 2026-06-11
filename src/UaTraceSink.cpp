@@ -35,5 +35,5 @@ bool UaTraceSink::initialize()
 
 void UaTraceSink::logMessage(const std::string& msg)
 {
-	UaTrace::tError("%s", msg.c_str());
+	UaTrace::tError(UaTrace::UserApp_0, "%s", msg.c_str());
 }

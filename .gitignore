@@ -11,6 +11,6 @@ Makefile
 *.so
 Debug/
 build/
+build-clang/
 .env
 .gitlab-ci-local
-

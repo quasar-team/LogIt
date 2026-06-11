@@ -73,3 +73,16 @@ Compile [Linux LOGIT_BACKENDS stdout boost]:
   extends: .exec_lin_system_boost
   variables:
     LOGIT_BACKENDS: "LOGIT_BACKEND_STDOUTLOG;LOGIT_BACKEND_BOOSTLOG"
+
+Run Clang Analysis on Linux:
+  stage: unstagged
+  image: gitlab-registry.cern.ch/jcop-opc-ua/common/images/alma-10-build:latest
+  needs: []
+  artifacts:
+    paths:
+      - build-clang/
+    when: always
+  script:
+    - dnf clean all
+    - dnf -y install clang clang-tools-extra clang-analyzer
+    - bash ci/run-clang-analysis-linux.sh
