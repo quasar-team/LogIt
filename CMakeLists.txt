@@ -15,8 +15,8 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Author: Ben Farnham <ben.farnham@cern.ch>
+cmake_minimum_required(VERSION 3.16)
 project(LogIt CXX)
-cmake_minimum_required(VERSION 2.8)
 
 option(LOGIT_BACKEND_STDOUTLOG "The basic back-end: logs to stdout" ON )
 option(LOGIT_BACKEND_BOOSTLOG "Rotating file logger back-end: fixed size on disk based on boost logging library" OFF )
