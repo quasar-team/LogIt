@@ -29,8 +29,8 @@ class WindowsDebuggerSink: public LogSinkInterface
 {
 public:
 
-    virtual bool initialize();
-    virtual void logMessage(const std::string& msg);
+    virtual bool initialize() override;
+    virtual void logMessage(const std::string& msg) override;
 };
 #endif // _WIN32
 
