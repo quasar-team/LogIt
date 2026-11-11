@@ -57,7 +57,8 @@ endif()
 target_include_directories(LogIt
     PUBLIC
         ${LOGIT_EXTRA_INCLUDE_DIRS}
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
 )
 if(LOGIT_DEFINITIONS)
     target_compile_definitions(LogIt PUBLIC ${LOGIT_DEFINITIONS})
