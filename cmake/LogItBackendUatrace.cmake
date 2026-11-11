@@ -15,8 +15,12 @@ list(PREPEND CMAKE_PREFIX_PATH
     "${LIBXML2_HOME}"
     )
 
-find_package(OpenSSL CONFIG REQUIRED COMPONENTS SSL Crypto)
-find_package(LibXml2 CONFIG REQUIRED)
+if(WIN32 AND MSVC)
+    set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
+endif()
+
+find_package(OpenSSL REQUIRED COMPONENTS SSL Crypto)
+find_package(LibXml2 REQUIRED)
 find_package(UASDKCPP CONFIG REQUIRED COMPONENTS uabasecpp)
 
 if(NOT TARGET UASDKCPP::uabasecpp)

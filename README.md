@@ -7,7 +7,7 @@ LogIt is a C++ logging library with:
 
 ## Requirements
 
-- CMake `>= 3.30`
+- CMake `>= 3.16`
 - C++17 compiler
 
 Optional dependencies are only required for optional backends (see below).
